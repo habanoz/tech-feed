@@ -2,11 +2,10 @@
 layout: single
 title:  "Top Programming Languages 2022"
 categories:
-  - languages
+  - analysis
 
 tags:
   - programming languages
-  - top programming languages 2022
 ---
 
 
