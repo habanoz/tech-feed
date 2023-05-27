@@ -11,7 +11,7 @@
 # https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/#installing-the-theme
 
 # theme                  : "minimal-mistakes-jekyll"
-remote_theme           : "mmistakes/minimal-mistakes"
+# remote_theme           : "mmistakes/minimal-mistakes"
 minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # Site Settings
@@ -74,14 +74,14 @@ google:
   instant_search         : # false (default), true
 # SEO Related
 google_site_verification : "UBHrcF6S7g-EruGXmifMmN01RDvHusfERhzJQVIU88c"
-bing_site_verification   :
+bing_site_verification   : "85CEE12EC8D52355B4B220AF0B41DB20"
 naver_site_verification  :
 yandex_site_verification :
 baidu_site_verification  :
 
 # Social Sharing
 twitter:
-  username               :
+  username               : Huseyin ABANOZ
 facebook:
   username               :
   app_id                 :
@@ -96,18 +96,18 @@ social:
 
 # Analytics
 analytics:
-  provider               : false # false (default), "google", "google-universal", "google-gtag", "custom"
+  provider               : "google-gtag" #false # false (default), "google", "google-universal", "google-gtag", "custom"
   google:
-    tracking_id          :
+    tracking_id          : "G-VT168BYNCW"
     anonymize_ip         : # true, false (default)
 
 
 # Site Author
 author:
-  name             : "Your Name"
+  name             : "Huseyin ABANOZ"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an **amazing** person."
-  location         : "Somewhere"
+  bio              : "Passionate Software Engineer"
+  location         : "Turkiye"
   email            :
   links:
     - label: "Email"
@@ -124,7 +124,7 @@ author:
       # url: "https://facebook.com/"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      # url: "https://github.com/"
+      url: "https://github.com/habanoz"
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       # url: "https://instagram.com/"
