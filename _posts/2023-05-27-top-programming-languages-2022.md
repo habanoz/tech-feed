@@ -1,6 +1,6 @@
 ---
 layout: single
-title:  "Welcome to Jekyll!"
+title:  "Top Programming Languages 2022"
 categories:
   - languages
 
@@ -9,7 +9,6 @@ tags:
   - top programming languages 2022
 ---
 
-# Top Programming Languages 2022
 
 This question is addressed by synthesizing data from different sources.
 
