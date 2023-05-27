@@ -35,18 +35,18 @@ Different platforms use different methods to gather data, so it is important to 
 
 Table below shows top 10 programming languages used in 2022.  
 
-| Github     | Stackoverflow | Jetbrains  |
-|------------|---------------|------------|
-| JavaScript | JavaScript    | JavaScript |
-| Python     | HTML/CSS      | HTML/CSS   |
-| Java       | SQL           | Python     |
-| Typescript | Python        | SQL        |
-| C#         | Typescript    | Java       |
-| C++        | java          | Shell      |
-| PHP        | C#            | Typescript |
-| Shell      | Shell         | C++        |
-| C          | PHP           | C#         |
-| Ruby       | C++           | C          |
+|  | Github     | Stackoverflow | Jetbrains  |
+|--|------------|---------------|------------|
+|1 | JavaScript | JavaScript    | JavaScript |
+|2 | Python     | HTML/CSS      | HTML/CSS   |
+|3 | Java       | SQL           | Python     |
+|4 | Typescript | Python        | SQL        |
+|5 | C#         | Typescript    | Java       |
+|6 | C++        | java          | Shell      |
+|7 | PHP        | C#            | Typescript |
+|8 | Shell      | Shell         | C++        |
+|9 | C          | PHP           | C#         |
+|10| Ruby       | C++           | C          |
 
 
 ## What Reports Tell
@@ -59,7 +59,7 @@ The list from Github report seems to exclude HTML/CSS and SQL, which may be due 
 
 Java comes next, at the third place. However trend of Java is debatable. Github report claims popularity of Java is decreasing slowly. Jetbrains report claims its popularity remains the same with some fluctuations over time. According to stackoverflow's report, Java is still popular among those learning to code. However, Loved vs Dreaded data given by Stackoveflow report shows that Java is not loved much among its users.  
 
-According to Jetbrains report, half of the developers are planning to adopt and programming language. The most popular choises are Go, Rust, Kotlin, Typescript and Python. According to Github report HCL, Rust, TypeScript, Lua and Go are five fastest growing programming languages in last 12 months. 
+According to Jetbrains report, half of the developers are planning to adopt a new  programming language. The most popular choises are Go, Rust, Kotlin, Typescript and Python. According to Github report HCL, Rust, TypeScript, Lua and Go are five fastest growing programming languages in last 12 months. 
 
 ## Key Take Aways
 
@@ -78,7 +78,7 @@ Readers are encouraged to check original reports to see real numbers.
 
 
 ## References
-1- [Github]{https://octoverse.github.com/2022/top-programming-languages}
-2- [Stackoverflow]{https://survey.stackoverflow.co/2022/#most-popular-technologies-language-prof}
-3- [Jetbrains]{https://www.jetbrains.com/lp/devecosystem-2022/}
-4- [Tiobe]{https://www.tiobe.com/tiobe-index}
+1. [Github](https://octoverse.github.com/2022/top-programming-languages)
+2. [Stackoverflow](https://survey.stackoverflow.co/2022/#most-popular-technologies-language-prof)
+3. [Jetbrains](https://www.jetbrains.com/lp/devecosystem-2022/)
+4. [Tiobe](https://www.tiobe.com/tiobe-index)
