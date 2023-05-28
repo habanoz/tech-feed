@@ -15,9 +15,13 @@ Java was designed in the early 1990s with a specific set of goals and principles
 
 Java is a programming language that has demonstrated its durability and flexibility over the years. It has evolved with the changing needs and trends of the software industry, incorporating new features and paradigms. 
 
+## Version History 
+
 Java 5 released in 2004. Major changes were introduction of generics, annotations, enums and java.util.concurrent package.
 
 java 6 released in 2006. Major changes were introduction of JAX-WS and improvements of JDBC, JAXB, Annotations and Garbage Collectors.
+
+No new version is relesed for about 5 years.
 
 Java 7 released in 2011. Major changes were introduction of dynamic JVM languages, New IO and fork/join framework.
 
@@ -84,3 +88,5 @@ Java remains one of the most widely used programming languages in the world. It 
 1. [Github](https://octoverse.github.com/2022/top-programming-languages)
 2. [Stackoverflow](https://survey.stackoverflow.co/2022/#most-popular-technologies-language-prof)
 3. [Jetbrains](https://www.jetbrains.com/lp/devecosystem-2022/)
+4. [Version History](https://en.wikipedia.org/wiki/Java_version_history)
+5. [Don’t call it a comeback: Why Java is still champ ](https://github.com/readme/featured/java-programming-language?utm_source=github&utm_medium=referral&utm_campaign=&scid=&utm_content=octoverse)
