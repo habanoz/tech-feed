@@ -76,7 +76,7 @@ Readers are encouraged to check original reports to see real numbers.
 
 
 ## References
-1. [Github](https://octoverse.github.com/2022/top-programming-languages)
-2. [Stackoverflow](https://survey.stackoverflow.co/2022/#most-popular-technologies-language-prof)
-3. [Jetbrains](https://www.jetbrains.com/lp/devecosystem-2022/)
+1. [Github Report 2022](https://octoverse.github.com/2022/top-programming-languages)
+2. [Stackoverflow Report 2022](https://survey.stackoverflow.co/2022/#most-popular-technologies-language-prof)
+3. [Jetbrains Report 2022](https://www.jetbrains.com/lp/devecosystem-2022/)
 4. [Tiobe](https://www.tiobe.com/tiobe-index)
