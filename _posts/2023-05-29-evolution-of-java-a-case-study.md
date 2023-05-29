@@ -487,7 +487,7 @@ diff --git a/src/main/java/org/example/ParallelWordCount.java b/src/main/java/or
 ## Java 1.5: Scanner
 
 
-Another utility class Java 5 offers for our usecase is Scanner class which can make our file reading simpler.
+Another utility class Java 5 offers useful for our usecase is Scanner class which can make our file reading simpler.
 
 ```diff
 Subject: [PATCH] use Scanner
@@ -824,7 +824,8 @@ public class ParallelWordCount implements Runnable {
 
     public void run() {
         try (Scanner scanner = new Scanner(new File(filename))) {
-            Stream<String> wordStream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(scanner, Spliterator.ORDERED), false)
+            Stream<String> wordStream =
+                    StreamSupport.stream(Spliterators.spliteratorUnknownSize(scanner, Spliterator.ORDERED), false)
                     .map(s -> s.split("\\s+")).flatMap(Arrays::stream);
 
             wordStream.filter(word -> !word.isEmpty())
@@ -839,13 +840,15 @@ public class ParallelWordCount implements Runnable {
         final Map<String, AtomicInteger> totalWordCount = new ConcurrentHashMap<>();
         ExecutorService executorService = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors());
 
-        Arrays.stream(fileNames).map(fileName -> new ParallelWordCount(fileName, totalWordCount)).forEach(executorService::submit);
+        Arrays.stream(fileNames).map(fileName -> new ParallelWordCount(fileName, totalWordCount))
+                .forEach(executorService::submit);
 
         executorService.shutdown();
         executorService.awaitTermination(5, TimeUnit.MINUTES);
 
         System.out.println("Top words:");
-        totalWordCount.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().intValue())).entrySet().stream()
+        totalWordCount.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().intValue()))
+                .entrySet().stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .limit(TOP_RESULTS)
                 .forEach(s -> System.out.println(s.getKey() + ": " + s.getValue()));
