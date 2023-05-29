@@ -1,5 +1,6 @@
 ---
 layout: single
+classes: wide
 title:  "Evolution of Java: A case study"
 categories:
   - workshop
