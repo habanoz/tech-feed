@@ -330,7 +330,7 @@ Atomic variables and ConcurrentHashMap are very suitable for our use case. They 
 
 Note that putIfAbsent method is only present at  ConcurrentMap interface until it is added to Map interface at java 8.
 
-```java
+```diff
 Subject: [PATCH] concurrenthashmap and atomic integer
 ---
 Index: src/main/java/org/example/ParallelWordCount.java
@@ -432,7 +432,7 @@ diff --git a/src/main/java/org/example/ParallelWordCount.java b/src/main/java/or
 
 Another major addition with java.util.concurrent package was ExecutorService API. Now we can get rid of manual thread management. 
 
-```java
+```diff
 Subject: [PATCH] use ExecutorService
 ---
 Index: src/main/java/org/example/ParallelWordCount.java
@@ -489,7 +489,7 @@ diff --git a/src/main/java/org/example/ParallelWordCount.java b/src/main/java/or
 
 Another utility class Java 5 offers for our usecase is Scanner class which can make our file reading simpler.
 
-```java
+```diff
 Subject: [PATCH] use Scanner
 ---
 Index: src/main/java/org/example/ParallelWordCount.java
@@ -865,8 +865,8 @@ In this article we tried to demonstrate evolution of Java using a simple use cas
 
 
 ## References
-1. [Github Report 2022](https://octoverse.github.com/2022/top-programming-languages)
-2. [Stackoverflow Report 2022](https://survey.stackoverflow.co/2022/#most-popular-technologies-language-prof)
-3. [Jetbrains Report 2022](https://www.jetbrains.com/lp/devecosystem-2022/)
-4. [Version History](https://en.wikipedia.org/wiki/Java_version_history)
-5. [Don’t call it a comeback: Why Java is still champ ](https://github.com/readme/featured/java-programming-language?utm_source=github&utm_medium=referral&utm_campaign=&scid=&utm_content=octoverse)
+1. [Java 5 Docs](https://docs.oracle.com/javase/1.5.0/docs/api/)
+2. [Java 6 Docs](https://docs.oracle.com/javase/6/docs/api/)
+3. [Java 7 Docs](https://docs.oracle.com/javase/7/docs/api/)
+4. [Java 8 Docs](https://docs.oracle.com/javase/8/docs/api/)
+5. [Version History](https://en.wikipedia.org/wiki/Java_version_history)
