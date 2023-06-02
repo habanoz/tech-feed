@@ -32,6 +32,7 @@ Rest application does not involve any external system access to avoid external f
 All applications are containerized using docker. Docker compose is used to start the containers. 
 
 K6 tool is used for testing. Test script first makes a post call. The same object is used all the time. The post call is followed by a get call which fetches all available records.  
+During test 10K virtual users are used for 30 seconds. Tests are repeated twice to avoid unlucky executions.
 
 All code, confifuration files and commands can be found in Github repository [1].
 
@@ -47,6 +48,14 @@ All code, confifuration files and commands can be found in Github repository [1]
 | spring-native    | 99             | 31                | 28.4                           |
 
 
+Native code does not require additional libraries/jars. Size of native images are smaller.
+
+Native code starts much faster. This is not surprising. It is already compiled. It does not require starting a JVM and loading required jars. 
+
+Native code consumes less momory. Initial memory consumption supports this claim. 
+
+In all cases Go application seems to be better. Native java applications come next. 
+
 
 ## K6 Test Results
  
@@ -60,16 +69,25 @@ All code, confifuration files and commands can be found in Github repository [1]
 | spring-native    | 333064     | 1808        | 728     | 231     | 647     | 8310    | 979        | 1210       |
 
 
+Load Test results are not as straightforward. 
+
+Micronaut results are worst. Even native micronaut results are not improved.
+
+Spring results are much better. Upon this, spring native results improves a lot. Actually spring native results are comparable to go results.
+
+Spring results indicate a stability issue. Spring tests ended with some executions interrupted probably due not completing in time. Eventough spring test results are good, max values worst. 
+
 ## Conclusion
 
-Concludes
+This particular test shows strengths of native code. Spring native in Graalvm performs as good as Go code. However, this single test is not enough to make any generalization.
 
+Without pointing to any language we can make following claims:
 
-## Outro
-
-Readers are encouraged to check original reports to see real numbers.
+Native code starts faster. Native code relies on smaller containers. Native applications start with less memory consumption. Native applications tend to perform better than their non-native forms. However, as in the demonstrated micronaut case, it is not always the case. 
 
 
 ## References
 1. [Test Code](https://github.com/habanoz/java-go-rest-app-compare)
-2. 
+2. [Spring Native](https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html)
+3. [Micronaut Graalvm Application](https://guides.micronaut.io/latest/micronaut-creating-first-graal-app-gradle-java.html)
+4. [K6 Tool](https://k6.io/open-source/)
