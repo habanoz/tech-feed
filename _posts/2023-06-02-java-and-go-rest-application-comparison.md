@@ -1,6 +1,7 @@
 ---
 layout: single
 title:  "Java and Go Rest Application Performance Comparison"
+classes: wide
 categories:
   - analysis
 
