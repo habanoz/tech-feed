@@ -116,7 +116,7 @@ memory.save_context({"input": "prompt3"}, {"output": "ai response3"})
 memory.load_memory_variables({}) # contains prompt1,2,3 and ai responses
 ```
 
-#### ConversationBufferWindowMemory, ConversationTokenBufferMemory and ConversationSummaryBufferMemory
+#### Memory with constraints
 
 ```python
 from langchain.memory import ConversationBufferWindowMemory
@@ -132,11 +132,7 @@ memory.load_memory_variables({}) # windows size is 1: keeps just last conversati
 # token limit
 memory = ConversationTokenBufferMemory(llm=llm, max_token_limit=30)
 memory = ConversationSummaryBufferMemory(llm=llm, max_token_limit=100)
-
 ```
 
 ## References
-1. [Test Code](https://github.com/habanoz/java-go-rest-app-compare)
-2. [Spring Native](https://docs.spring.io/spring-boot/docs/current/reference/html/native-image.html)
-3. [Micronaut Graalvm Application](https://guides.micronaut.io/latest/micronaut-creating-first-graal-app-gradle-java.html)
-4. [K6 Tool](https://k6.io/open-source/)
+1. first reference
