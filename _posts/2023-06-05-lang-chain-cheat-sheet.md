@@ -285,7 +285,8 @@ chain.run("<>")
 ```python
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
-from langchain.vectorstores import DocArrayInMemorySearch
+from langchain.vectorstores import DocArrayInMemorySearch# alternative to DocArrayInMemorySearch
+# from langchain.vectorstores import Chroma
 from langchain.indexes import VectorstoreIndexCreator
 
 loader = ## e.g. CSVLoader(file_path=file)
@@ -293,6 +294,7 @@ loader = ## e.g. CSVLoader(file_path=file)
 index = VectorstoreIndexCreator(
     vectorstore_cls=DocArrayInMemorySearch
     # embedding=embeddings,
+    # text_splitter=CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
 ).from_loaders([loader])
 
 query ="<>"
@@ -305,6 +307,8 @@ response = index.query(query)
 ```python
 from langchain.chat_models import ChatOpenAI
 from langchain.vectorstores import DocArrayInMemorySearch
+# alternative to DocArrayInMemorySearch
+# from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 
@@ -316,6 +320,9 @@ db = DocArrayInMemorySearch.from_documents(
     docs, 
     embeddings
 )
+
+## or Chroma is alternative
+# db = Chroma.from_documents(docs, embeddings)
 
 query = "<>"
 llm = ChatOpenAI(temperature = 0.0)
