@@ -346,5 +346,144 @@ response = qa_stuff.run(query)
 
 ```
 
+## Generate Evaluation Datas
+
+```python
+from langchain.chat_models import ChatOpenAI
+from langchain.evaluation.qa import QAGenerateChain
+
+
+examples = [
+    {
+        "query": "Do the Cozy Comfort Pullover Set\
+        have side pockets?",
+        "answer": "Yes"
+    },
+    {
+        "query": "What collection is the Ultra-Lofty \
+        850 Stretch Down Hooded Jacket from?",
+        "answer": "The DownTek collection"
+    }
+]
+
+loader = # CSVLoader(file_path=file)
+data = loader.load()
+
+example_gen_chain = QAGenerateChain.from_llm(ChatOpenAI())
+new_examples = example_gen_chain.apply_and_parse(
+    [{"doc": t} for t in data[:5]]
+)
+
+examples += new_examples
+
+```
+
+## Debug
+
+```python
+
+import langchain
+langchain.debug = True
+
+# do sth.
+# qa.run(examples[0]["query"])
+
+langchain.debug = False
+
+```
+
+## LM Assisted Evaluation
+
+```python
+from langchain.evaluation.qa import QAEvalChain
+
+llm = ChatOpenAI(temperature=0)
+eval_chain = QAEvalChain.from_llm(llm)
+
+predictions = qa.apply(examples)
+
+graded_outputs = eval_chain.evaluate(examples, predictions)
+
+for i, eg in enumerate(examples):
+    print(f"Example {i}:")
+    print("Question: " + predictions[i]['query'])
+    print("Real Answer: " + predictions[i]['answer'])
+    print("Predicted Answer: " + predictions[i]['result'])
+    print("Predicted Grade: " + graded_outputs[i]['text'])
+    print()
+
+```
+
+## Agents
+
+### Basic Tools
+
+```python
+
+from langchain.agents.agent_toolkits import create_python_agent
+from langchain.agents import load_tools, initialize_agent
+from langchain.agents import AgentType
+from langchain.tools.python.tool import PythonREPLTool
+from langchain.python import PythonREPL
+from langchain.chat_models import ChatOpenAI
+
+
+llm = ChatOpenAI(temperature=0)
+
+tools = load_tools(["llm-math","wikipedia"], llm=llm)
+
+
+agent= initialize_agent(
+    tools, 
+    llm, 
+    agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION,
+    handle_parsing_errors=True,
+    verbose = True)
+
+question = "<>"
+result = agent(question)
+
+```
+### Python REPL Tools
+
+```python
+
+agent = create_python_agent(
+    llm,
+    tool=PythonREPLTool(),
+    verbose=True
+)
+
+input_list = []
+agent.run(f"""<>: {input_list}""") # e.g. sort list
+
+```
+
+### Custom Tool
+
+```python
+
+from langchain.agents import tool
+from datetime import date
+
+@tool
+def time(text: str) -> str:
+    """Returns todays date, use this for any \
+    questions related to knowing todays date. \
+    The input should always be an empty string, \
+    and this function will always return todays \
+    date - any date mathmatics should occur \
+    outside this function."""
+    return str(date.today())
+
+agent= initialize_agent(
+    tools + [time], 
+    llm, 
+    agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION,
+    handle_parsing_errors=True,
+    verbose = True)
+```
+
 ## References
-1. first reference
+1. [Deep Learning AI Course](https://learn.deeplearning.ai/langchain/course-feedback)
+2. [Langchain Quickstart Guide](https://python.langchain.com/en/latest/getting_started/getting_started.html)
