@@ -136,5 +136,147 @@ memory = ConversationTokenBufferMemory(llm=llm, max_token_limit=30)
 memory = ConversationSummaryBufferMemory(llm=llm, max_token_limit=100)
 ```
 
+## Chains
+
+#### LLMChain
+
+```python
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+from langchain.chains import LLMChain
+
+llm = ChatOpenAI(temperature=0.9)
+prompt = ChatPromptTemplate.from_template("<>{input}<>")
+
+chain = LLMChain(llm=llm, prompt=prompt)
+input_text = "<>"
+chain.run(input_text)
+
+```
+
+#### SimpleSequentialChain
+
+Each chain has 1 input and 1 output.
+
+```python
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+from langchain.chains import SimpleSequentialChain
+
+llm = ChatOpenAI(temperature=0.9)
+
+# chain 1
+prompt1 = ChatPromptTemplate.from_template("<>{input}<>")
+chain1 = LLMChain(llm=llm, prompt=prompt1)
+
+# chain 2
+prompt2 = ChatPromptTemplate.from_template("<>{input2}<>")
+chain2 = LLMChain(llm=llm, prompt=prompt2)
+
+chain = SimpleSequentialChain(chains=chain1, chain2],verbose=True)
+
+input_text = "<>"
+chain.run(input_text)
+```
+
+#### SequentialChain
+
+```python
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+from langchain.chains import SequentialChain
+
+llm = ChatOpenAI(temperature=0.9)
+
+prompt1 = ChatPromptTemplate.from_template("<>{intput_text}<>")
+chain1 = LLMChain(llm=llm, prompt=prompt1, output_key="output_text1")
+
+prompt2 = ChatPromptTemplate.from_template("<>{output_text1}<>")
+chain2 = LLMChain(llm=llm, prompt=prompt2, output_key="output_text2")
+
+prompt3 = ChatPromptTemplate.from_template("<>{intput_text}<>")
+chain3 = LLMChain(llm=llm, prompt=prompt3, output_key="output_text3")
+
+prompt4 = ChatPromptTemplate.from_template("<>{output_text2}<>{output_text3}<>")
+chain4 = LLMChain(llm=llm, prompt=prompt4, output_key="output_text4")
+
+chain = SequentialChain(
+    chains=[chain1, chain2, chain3, chain4],
+    input_variables=["intput_text"],
+    output_variables=["output_text1", "output_text2","output_text4"],
+    verbose=True
+)
+
+input_text = "<>"
+chain(input_text)
+
+```
+
+#### Router Chain
+
+```python
+from langchain.chains.router import MultiPromptChain
+from langchain.chains.router.llm_router import LLMRouterChain,RouterOutputParser
+from langchain.prompts import PromptTemplate
+
+llm = ChatOpenAI(temperature=0)
+
+template_text1 = "<>{input}<>"
+template_text2 = "<>{input}<>"
+template_text3 = "<>{input}<>"
+
+prompt1 = ChatPromptTemplate.from_template(template=template_text1)
+chain1 = LLMChain(llm=llm, prompt=prompt1)
+
+chains = {'domain1':chain1, 'domain2':chain2, 'domain3':chain3}
+domains_str = "\n".join(['domain1: Good for domain1', 'domain2: Good for domain2', 'domain3: Good for domain3'])
+
+prompt_default = ChatPromptTemplate.from_template("{input}")
+chain_default = LLMChain(llm=llm, prompt=prompt_default)s
+
+router_tamplate_text_0 = """
+<>
+
+<< FORMATTING >>
+Return a markdown code snippet with a JSON object formatted to look like:
+```json
+{{{{
+    "destination": string \ name of the prompt to use or "DEFAULT"
+    "next_inputs": string \ a potentially modified version of the original input
+}}}}
+
+REMEMBER: "destination" MUST be one of the candidate prompt \
+names specified below OR it can be "DEFAULT" if the input is not\
+well suited for any of the candidate prompts.
+REMEMBER: "next_inputs" can just be the original input \
+if you don't think any modifications are needed.
+
+<< CANDIDATE PROMPTS >>
+{domains}
+
+<< INPUT >>
+{{input}}
+
+<< OUTPUT (remember to include the ```json)>>
+"""
+
+router_tamplate_text = router_tamplate_text_0.format(
+    domains=domains_str
+)
+
+router_prompt = PromptTemplate(
+    template=router_tamplate_text,
+    input_variables=["input"],
+    output_parser=RouterOutputParser(),
+)
+
+router_chain = LLMRouterChain.from_llm(llm, router_prompt)
+
+chain = MultiPromptChain(router_chain=router_chain, destination_chains=chains, default_chain=chain_default, verbose=True)
+
+chain.run("<>")
+
+```
+
 ## References
 1. first reference
