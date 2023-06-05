@@ -278,5 +278,66 @@ chain.run("<>")
 
 ```
 
+## Indexes
+
+### One Line Index Creation
+
+```python
+from langchain.chains import RetrievalQA
+from langchain.chat_models import ChatOpenAI
+from langchain.vectorstores import DocArrayInMemorySearch
+from langchain.indexes import VectorstoreIndexCreator
+
+loader = ## e.g. CSVLoader(file_path=file)
+
+index = VectorstoreIndexCreator(
+    vectorstore_cls=DocArrayInMemorySearch
+    # embedding=embeddings,
+).from_loaders([loader])
+
+query ="<>"
+response = index.query(query)
+
+```
+
+## Walkthrough
+
+```python
+from langchain.chat_models import ChatOpenAI
+from langchain.vectorstores import DocArrayInMemorySearch
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.chains import RetrievalQA
+
+loader = ## e.g. CSVLoader(file_path=file)
+docs = loader.load()
+
+embeddings = OpenAIEmbeddings()
+db = DocArrayInMemorySearch.from_documents(
+    docs, 
+    embeddings
+)
+
+query = "<>"
+llm = ChatOpenAI(temperature = 0.0)
+
+# combine documents
+selected_docs = db.similarity_search(query)
+combined_docs = "".join([docs[i].page_content for i in range(len(selected_docs))])
+
+response = llm.call_as_llm(f"{combined_docs} Question: <>")
+
+# or use a chain
+retriever = db.as_retriever()
+qa_stuff = RetrievalQA.from_chain_type(
+    llm=llm, 
+    chain_type="stuff", 
+    retriever=retriever, 
+    verbose=True
+)
+
+response = qa_stuff.run(query)
+
+```
+
 ## References
 1. first reference
