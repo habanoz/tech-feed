@@ -300,7 +300,7 @@ response = index.query(query)
 
 ```
 
-## Walkthrough
+### Walkthrough
 
 ```python
 from langchain.chat_models import ChatOpenAI
