@@ -93,7 +93,7 @@ print(output_dict.get('field3'))
 
 ## Memory
 
-#### ConversationBufferMemory
+### ConversationBufferMemory
 
 ```python
 from langchain.chat_models import ChatOpenAI
@@ -118,7 +118,7 @@ memory.save_context({"input": "prompt3"}, {"output": "ai response3"})
 memory.load_memory_variables({}) # contains prompt1,2,3 and ai responses
 ```
 
-#### Memory with constraints
+### Memory with constraints
 
 ```python
 from langchain.memory import ConversationBufferWindowMemory
@@ -137,8 +137,8 @@ memory = ConversationSummaryBufferMemory(llm=llm, max_token_limit=100)
 ```
 
 ## Chains
-asdasd
-#### LLMChain
+
+### LLMChain
 
 ```python
 from langchain.chat_models import ChatOpenAI
@@ -154,7 +154,7 @@ chain.run(input_text)
 
 ```
 
-#### SimpleSequentialChain
+### SimpleSequentialChain
 
 Each chain has 1 input and 1 output.
 
@@ -179,7 +179,7 @@ input_text = "<>"
 chain.run(input_text)
 ```
 
-#### SequentialChain
+### SequentialChain
 
 ```python
 from langchain.chat_models import ChatOpenAI
@@ -212,7 +212,7 @@ chain(input_text)
 
 ```
 
-#### Router Chain
+### Router Chain
 
 ```python
 from langchain.chains.router import MultiPromptChain
