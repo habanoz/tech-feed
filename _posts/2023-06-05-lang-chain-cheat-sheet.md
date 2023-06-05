@@ -1,6 +1,8 @@
 ---
 layout: single
 title:  "Langchain Cheat Sheet"
+classes: wide
+
 categories:
   - cheatsheet
 
