@@ -262,5 +262,70 @@ Technical specifications: ```{fact_sheet_chair}```
 
 ```
 
+## Summarization
+
+### Limits
+
+```python
+prompt = f"""
+Your task is to generate a short summary of a product \
+review from an ecommerce site. 
+
+Summarize the review below, delimited by triple 
+backticks, in at most 30 words. 
+
+Review: ```{prod_review}```
+"""
+```
+
+### Focus
+
+```python
+# focus on shipment and delivery
+prompt = f"""
+Your task is to generate a short summary of a product \
+review from an ecommerce site to give feedback to the \
+Shipping deparmtment. 
+
+Summarize the review below, delimited by triple 
+backticks, in at most 30 words, and focusing on any aspects \
+that mention shipping and delivery of the product. 
+
+Review: ```{prod_review}```
+"""
+
+#focus on price
+
+prompt = f"""
+Your task is to generate a short summary of a product \
+review from an ecommerce site to give feedback to the \
+pricing deparmtment, responsible for determining the \
+price of the product.  
+
+Summarize the review below, delimited by triple 
+backticks, in at most 30 words, and focusing on any aspects \
+that are relevant to the price and perceived value. 
+
+Review: ```{prod_review}```
+"""
+
+```
+
+### Extract Infomation
+
+```python
+prompt = f"""
+Your task is to extract relevant information from \ 
+a product review from an ecommerce site to give \
+feedback to the Shipping department. 
+
+From the review below, delimited by triple quotes \
+extract the information relevant to shipping and \ 
+delivery. Limit to 30 words. 
+
+Review: ```{prod_review}```
+"""
+```
+
 ## References
 1. [Deep Learning AI Course](https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/1/introduction)
