@@ -181,7 +181,7 @@ In the second setting, number of urls is fixed and minimum number of chars filte
 
 ### Total words by Number of URLs
 
-![My image](/assets/image/crawler-urls-words.png)
+![My image](assets/image/crawler-urls-words.png)
 
 ## References
 1. [Github Source Code](https://github.com/habanoz/crawl-for-vector-db)
