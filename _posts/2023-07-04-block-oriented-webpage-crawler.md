@@ -151,8 +151,6 @@ Similarly definition of china includes parts from india definition. By mere coin
  'Germany: Germany, officially Federal Republic of Germany, German Deutschland or Bundesrepublik Deutschland, country of north-central Europe, traversing the continent’s main physical divisions, from the outer ranges of the Alps northward across the varied landscape of the Central German Uplands and then across the North German Plain.',
  'France: France, officially French Republic, French France or République Française, country of northwestern Europe. Historically and culturally among the most important nations in the Western world, France has also played a highly significant role in international affairs, with former colonies in every corner of the globe.',
  'Europe Countries:']
-
-
 ```
 
 
@@ -184,13 +182,30 @@ In the second setting, number of urls is fixed and minimum number of chars filte
 
 ![My image]({{site.baseurl}}/assets/images/crawler-urls-words.png)
 
+Total number of words block based crawler produces increases more slowly compared to regular crawling. This is due to duplicate removal feature.   
+
 ### Total Number of Words by Minimum Length Filter
 
 ![My image]({{site.baseurl}}/assets/images/crawler-limit-total-words.png)
 
+Minimum char limit does not affect regular scrapper. Because it produces longer chunks. 
+Minimum char limit helps block based crawler get rid of short and probably not-useful chunks.
+
 ### Average Number of Words by Minimum Length Filter
 
 ![My image]({{site.baseurl}}/assets/images/crawler-limit-average-words.png)
+
+Similar to total number of words, average word count also decreases as a response to minimum char count filter.
+
+
+## Conclusion
+
+Block based crawling produces less text. Thus it costs less to build embeddings. 
+Block based crawling produces smaller chunks. Working with smaller chunks is cheaper because LLMs charge by tokens. 
+
+Note that this study does not make any claim about question anwering success of the proposed technique. 
+
+Also note that block based crawling can be a good candidate for general purpose crawling. However best results can most probably be obtained by using targeted crawlers that are designed according to structure of specific platform. Even then ideas from block based crawling can be leveraged.      
 
 ## References
 1. [Github Source Code](https://github.com/habanoz/crawl-for-vector-db)
