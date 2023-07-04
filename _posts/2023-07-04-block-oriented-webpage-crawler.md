@@ -180,9 +180,17 @@ In the first setting, number of urls fetched varied from 1 to 7.
 
 In the second setting, number of urls is fixed and minimum number of chars filter is adjusted. If a split has less than filter allows it is not included in result. This filter does not have a meaningful effect in regular scrapping but has substantial effect in block based approach. This is because significant amount of blocks contain information that is too short to help answer any question. 
 
-### Total words by Number of URLs
+### Total Words by Number of URLs
 
 ![My image]({{site.baseurl}}/assets/images/crawler-urls-words.png)
+
+### Total Number of Words by Minimum Length Filter
+
+![My image]({{site.baseurl}}/assets/images/crawler-limit-total-words.png)
+
+### Average Number of Words by Minimum Length Filter
+
+![My image]({{site.baseurl}}/assets/images/crawler-limit-average-words.png)
 
 ## References
 1. [Github Source Code](https://github.com/habanoz/crawl-for-vector-db)
