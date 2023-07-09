@@ -656,6 +656,8 @@ print(response)
 
 ## TELeR: A General Taxonomy of LLM Prompts for Benchmarking Complex Tasks
 
+![Teler Figure 1]({{site.baseurl}}/assets/images/teler-figure-1.png)
+
 According to the paper; LLM prompts for complex
 tasks are categorized along the following four dimensions.
 
@@ -667,8 +669,6 @@ tasks are categorized along the following four dimensions.
 By definition, Level “0” means minimal details, i.e., no aspects/no directive; while level “5” means the highest level of details where the directive includes clear goals, distinct sub-tasks/steps, an explicit requirement of explanation/justification, well-defined criteria for evaluation and/or few-shot examples.
 
 ### Example Use Case 1 :  Meta-Review Generation
-
-![Teler Figure 1]({{site.baseurl}}/assets/images/teler-figure-1.png)
 
 Meta-reviewing is a critical part of the scientific peer-review process and is generally a complex task that involves summarizing expert reviews from multiple reviewers (Shen et al., 2022, 2023)
 
