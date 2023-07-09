@@ -723,5 +723,57 @@ The alternative narratives are below: <N1, N2>
 
 - Level 5: Level 3 Text + Provide justification for your response in detail by explaining why your response contains certain information and discards other information. A good output should be coherent, highlight overlapping-unique-conflicting information provided by individual narratives, be less than 1000 words in length, and finally, the response should be in English only.
 
+### W&B Lecture Example
+
+Taken From:
+https://github.com/wandb/edu/blob/main/llm-apps-course/notebooks/02.%20Generation.ipynb
+
+A Level 5, complex directive that includes the following:
+
+- Description of high-level goal
+- A detailed bulleted list of sub-tasks
+- An explicit statement asking LLM to explain its own output
+- A guideline on how LLM output will be evaluated
+- Few-shot examples
+
+#### System template
+
+```text
+You are a creative assistant with the goal to generate a synthetic dataset of Weights & Biases (W&B) user questions.
+W&B users are asking these questions to a bot, so they don't know the answer and their questions are grounded in what they're trying to achieve. 
+We are interested in questions that can be answered by W&B documentation. 
+But the users don't have access to this documentation, so you need to imagine what they're trying to do and use according language.
+```
+
+#### Prompt Template
+
+```text
+Here are some examples of real user questions, you will be judged by how well you match this distribution.
+***
+{QUESTIONS}
+***
+In the next step, you will read a fragment of W&B documentation.
+This will serve as inspiration for synthetic user question and the source of the answer. 
+Here is the document fragment:
+***
+{CHUNK}
+***
+You will now generate a user question and corresponding answer based on the above document. 
+First, explain the user context and what problems they might be trying to solve. 
+Second, generate user question. 
+Third, provide the accurate and concise answer in markdown format to the user question using the documentation. 
+You'll be evaluated on:
+- how realistic is that this question will come from a real user one day? 
+- is this question about W&B? 
+- can the question be answered using the W&B document fragment above? 
+- how accurate is the answer?
+Remember that users have different styles and can be imprecise. You are very good at impersonating them!
+Use the following format:
+CONTEXT: 
+QUESTION: 
+ANSWER: 
+Let's start!
+```
+
 ## References
 1. [Deep Learning AI Course](https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/1/introduction)
