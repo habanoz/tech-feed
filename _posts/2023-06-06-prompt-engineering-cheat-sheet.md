@@ -776,3 +776,5 @@ Let's start!
 
 ## References
 1. [Deep Learning AI Course](https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/1/introduction)
+2. Santu, S. K., & Feng, D. (2023). TELeR: A General Taxonomy of LLM Prompts for Benchmarking Complex Tasks. ArXiv. /abs/2305.11430
+
