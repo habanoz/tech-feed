@@ -654,6 +654,74 @@ print(response)
 
 ```
 
+## TELeR: A General Taxonomy of LLM Prompts for Benchmarking Complex Tasks
+
+According to the paper; LLM prompts for complex
+tasks are categorized along the following four dimensions.
+
+1- Turn: Based on the number of turns used while prompting a language model in order to perform a complex task, prompts can be either single-turn or multi-turn.
+2- Expression: Based on the expression style of the overall task as well as the associated sub-tasks, prompts can be either question-style or instruction-style.
+3- Role: Based on whether a proper system role is defined in the LLM system before providing the actual prompt, prompts can have system-role either defined or undefined.
+4- Level of Details: Based on whether particular aspects of the goal task definition is present or absent in the directive, prompts are divided into six distinct levels. Here, aspects refer to clear goal definition, sub-task division, explanation seeking, providing few-shot examples, etc. 
+
+By definition, Level “0” means minimal details, i.e., no aspects/no directive; while level “5” means the highest level of details where the directive includes clear goals, distinct sub-tasks/steps, an explicit requirement of explanation/justification, well-defined criteria for evaluation and/or few-shot examples.
+
+### Example Use Case 1 :  Meta-Review Generation
+
+![Teler Figure 1]({{site.baseurl}}/assets/images/teler-figure-1.png)
+
+Meta-reviewing is a critical part of the scientific peer-review process and is generally a complex task that involves summarizing expert reviews from multiple reviewers (Shen et al., 2022, 2023)
+
+
+We also assume that three review-ers have reviewed the manuscript and provided their comments as the data for the meta-review generation task. Suppose that these three reviewer comments are denoted by R1, R2, R3.
+
+- Level 0 Prompt: <R1, R2, R3>
+
+- Level 1 Prompt: Prepare a meta-review by summarizing the following reviewer comments: <R1,R2, R3>
+
+- Level 2 Prompt: Prepare a meta-review by summarizing the following reviewer comments. 
+The final output should highlight the core contributions of the manuscript, common strengths/weaknesses mentioned by multiple reviewers, suggestions for improvement, and missing references (if any). The review texts are provided below: <R1, R2, R3>
+
+- Level 3 Prompt: Prepare a meta-review by answering the following questions from the reviewer comments (provided after the questions). 
+
+1. Based on the reviewer’s comments, what are the core contributions made by this manuscript?
+2. What are the common strengths of this work, as mentioned by multiple reviewers?
+3. What are the common weaknesses of this work, as highlighted by multiple reviewers?
+4. What suggestions would you provide for improving this paper?
+5. What are the missing references mentioned by the individual reviews?
+
+The review texts are below: <R1, R2, R3>
+
+- Level 4 Prompt: Level 3 Text + Provide justification for your response in detail by explaining why you made the choices you actually made.
+
+- Level 5 Prompt: Level 3 Text + Provide justification for your response in detail by explaining why you made the choices you actually made. A good output should be coherent, highlight major strengths/issues mentioned by multiple reviewers, be less than 400 words in length, and finally, the response should be in English only.
+
+
+### Example Use Case 2: Narrative Braiding
+
+Narrative braiding, also known as “interweaving” or “multi-perspective storytelling” is a literary technique that involves the parallel telling of multiple storylines that eventually converge and intersect (Bancroft, 2018). 
+
+We also assume two alternative narratives are available that describe the same event as our data for the braiding task, and the goal is to create a final braided narrative. The two alternative narratives are denoted by N1, and N2.
+
+- Level 0: <N1, N2>
+
+- Level 1: Braid a single coherent story from the following alternative narratives: <N1, N2>
+
+- Level 2: Braid a single coherent story from the following alternative narratives. The final narrative should highlight the common information provided by both narratives, interesting unique information provided by each individual narrative, and conflicting information (if any) conveyed in these narratives. The input alternative narratives are provided below: <N1, N2>
+
+- Level 3: Braid a single coherent story from the following alternative narratives provided later by performing the following tasks.
+1. Extract overlapping clause pairs from both narratives and paraphrase them.
+2. Extract unique clauses from each narrative and identify the interesting ones.
+3. Extract conflicting clause pairs conveyed in both narratives and resolve the conflict (if possible).
+4. Generate paragraphs from overlapping unique-conflicting clauses and merge them into a single document.
+5. Reorder sentences of the merged document into a detailed, coherent story.
+6. Summarize the detailed story into a concise braided narrative.
+The alternative narratives are below: <N1, N2>
+ 
+ 
+- Level 4: Level 3 Text + Provide justification for your response in detail by explaining why your response contains certain information and discards other information.
+
+- Level 5: Level 3 Text + Provide justification for your response in detail by explaining why your response contains certain information and discards other information. A good output should be coherent, highlight overlapping-unique-conflicting information provided by individual narratives, be less than 1000 words in length, and finally, the response should be in English only.
 
 ## References
 1. [Deep Learning AI Course](https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/1/introduction)
