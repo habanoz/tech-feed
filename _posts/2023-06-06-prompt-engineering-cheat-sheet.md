@@ -725,8 +725,7 @@ The alternative narratives are below: <N1, N2>
 
 ### W&B Lecture Example
 
-Taken From:
-https://github.com/wandb/edu/blob/main/llm-apps-course/notebooks/02.%20Generation.ipynb
+Taken From [Notebook](https://github.com/wandb/edu/blob/main/llm-apps-course/notebooks/02.%20Generation.ipynb)
 
 A Level 5, complex directive that includes the following:
 
