@@ -33,7 +33,7 @@ Another crucial thing to understand is that next word prediction is not about ou
 
 ## LLM Inferencing
 
-Once training is complete, an LLM can be used for generating text output which is also called inferencing.
+Once training is complete, an LLM can be used for generating text output,called as inferencing.
 
 Remember that our model can only predict the next word given the input. To obtain a complete answer, we need to append the predicted word to the input and feed it back to the model at each generation step. This iterative process of generating words one by one is called decoding.
 
@@ -44,13 +44,13 @@ Please see Figure 1 for illustration of the decoding process.
 
 ## Sampling
 
-For the same input, a model will generate the same output. This is not desirable for text generation tasks that require creativity. Let's assume you need to a cooking recipe. A model generating the same recipe all the time would not be useful. 
+For the same input, a model, in general, will generate the same output. This is not desirable for text generation tasks that require creativity. Let's assume you need to a cooking recipe. A model generating the same recipe all the time would not be useful. 
 
-Some tasks need precise output, like question answering. For example capital of Turkey cannot change from time to time.
+Some tasks need precise output, like question answering. For example, capital of Turkey do not change from time to time.
 
-A language model supports both output style via sampling. One sampling method widely used is temperature based sampling. Temperature is a number between 0 and 1. When temperature is 0 the most likely tokens will be selected at each step. As temperature approaches to 1, model becomes more likely to generate output based on less likely tokens. 
+A language model supports both output style via sampling. One sampling method widely used is temperature based sampling. Temperature is a number between 0 and 1. When temperature is 0, most likely tokens will be selected at each step. As temperature approaches to 1, model becomes more likely to generate output based on less likely tokens. 
 
-Consider the next token distribution about capital in Figure 1. Ankara has a probability of 0.85 which is very high. However, if temperature is close to 1, less likely tokens like İstanbul, Bursa or İzmir can be selected. Depending on how close is temperature to 1, even completely irrelevant tokens can be selected, like flower, car, iskender etc. This is because the model output distribution is over full vocabulary. 
+Consider the next token distribution about capital in Figure 1. Ankara has a probability of 0.85 which is very high. However, if temperature is close to 1, less likely tokens like İstanbul, Bursa or İzmir can be selected. Depending on how close temperature is to 1, even completely irrelevant tokens can be selected, like flower, car, iskender etc. This is because the model output distribution is over full vocabulary. 
 
 ## Final Notes
 
