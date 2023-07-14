@@ -44,7 +44,7 @@ Please see Figure 1 for illustration of the decoding process.
 
 ## Sampling
 
-For the same input, a model, in general, will generate the same output. This is not desirable for text generation tasks that require creativity. Let's assume you need to a cooking recipe. A model generating the same recipe all the time would not be useful. 
+For the same input, a model, in general, will generate the same output. This is not desirable for text generation tasks that require creativity. Let's assume you need a cooking recipe. A model generating the same recipe all the time would not be useful. 
 
 Some tasks need precise output, like question answering. For example, capital of Turkey do not change from time to time.
 
@@ -54,8 +54,8 @@ Consider the next token distribution about capital in Figure 1. Ankara has a pro
 
 ## Final Notes
 
-- Note that capitol is not the right word but the model still produces the correct answer. Because capitol and capital has close meaning.
-- Note that word Türkiye is used but not english word Turkey. The answer is still correct because Türkiye and Turkey has closely placed in the vector space of the model. 
+- Note that capitol is not the right word but the model still produces the correct answer. Because word capitol is placed closed to word capital in vector space.
+- Note that word Türkiye is used but not english word Turkey. The answer is still correct because Türkiye and Turkey are closely placed in the vector space of the model. 
 - Note that second question does not refer to Turkey but model understands that the question is about Turkey. Because model input is the prompt plus the conversation history. 
 
 ## References
