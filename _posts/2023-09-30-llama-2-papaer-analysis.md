@@ -29,7 +29,7 @@ mathjax: true
 
 #### Hyperparameters
 - AdamW optimizer with $\beta_1 = 0.9$, $\beta_2 = 0.95$, $\eps = 10^-5$
-- $$\eps = 10^-5$$
+- $$ \alpha = 10^{-5} $$
 
 ## References
 1. [Github Source Code](https://github.com/habanoz/crawl-for-vector-db)
