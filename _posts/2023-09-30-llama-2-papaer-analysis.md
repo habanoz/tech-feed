@@ -12,7 +12,7 @@ tags:
   - rlhf
   - llm
   - training
-
+mathjax: true
 ---
 
 ## Pretraining
