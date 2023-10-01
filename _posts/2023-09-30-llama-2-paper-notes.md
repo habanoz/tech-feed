@@ -92,6 +92,24 @@ I am not sure why it is indicated to be a "pretrained chat model", it should be 
 
 *Training Objectives*: 
 
-$$\mathcal{L}=-log(\sigma(r_{\theta}(x,y_c)))$$
+$$\mathcal{L}_{ranking}=-log(\sigma( r_{\theta}(x,y_c) - r_{\theta}(x,y_r) - m(r) ))$$
+
+Where $$r_{\theta}(x,y_c)$$ is scalar score output for prompt $$x$$ and completion $$y$$ with model weights $$\theta$$. $$y_c$$ is preferred answer. $$y_r$$ is rejected answer. margin component $$m(r)$$ is a discrete function of preference rating.
+
+Training procedure update reward function weights such that difference between accepted and rejected answer scores is maximized. Margin component tries to further move apart scores especially for dissimilar responses. Margin component is novel and added by the authors to the loss function. It is shown that margin component imroves Helpfulness reward model accuracy especially on samples
+where two responses are more separable. However it needs to be used with caution. 
+
+![margins]({{site.baseurl}}/assets/images/llama2-table-27.png)
+
+Table 27 of the paper shows different margin values tried.
+
+![margin-effects]({{site.baseurl}}/assets/images/llama2-table-28.png)
+
+Table 28 of the paper shows affect of margin on model performance. Small margin helps model. Large margin improves model on more separable responses while degrades model on more similar responses.
+
+Figure 27 of the paper shows affect of margin component on reward model output density. As margin increases, model generates more marginal scores. A large margin causes large distribution shift in reward model which may affect PPO performance which is sensitive to reward distribution change. Authors note to invest more in reward calibration future work.  
+
+![reward-shift-by-margin]({{site.baseurl}}/assets/images/llama2-figure-27.png)
+
 ## References
 1. [Github Source Code](https://github.com/habanoz/crawl-for-vector-db)
