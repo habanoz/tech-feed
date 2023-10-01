@@ -166,17 +166,44 @@ Figure 7 of the paper shows that as K increases maximum score for the generated 
 
 Figure 8 of the paper shows the relationship between temparature and maximum reward by number of samples. RLHF models exhibit different temperature behaviour than SFT models.
 
+Rejection sampling is only applied with Llama 2-Chat 70B. All smaller models are fine-tuned on rejection sampled data from the larger model, thus distilling the large-model capabilities into the smaller ones.
+
 *PPO*:
 
 Pretrained language model is regarded as the policy to optimize using the following objective:
 
-$$ \arg \max_{\pi} E_{p~D, g~\pi} [R(g|p)] $$
+$$ \arg \max_{\pi} E_{p \sim D, g \sim \pi} [R(g|p)] $$
 
 where $$p$$ is prompt sampled from dataset $$D$$, $$g$$ is generation from the policy $$\pi$$. Reward function is:
 
 $$ R(g|p) = \tilde{R}_c (g|p)  - \beta D_{KL} (\pi_{\theta}(g|p) ||  \pi_{0}(g|p)) $$
 
 which similar to instructGPT paper includes a penaly term that penalizes divergance from the initial policy.  
+
+Reward function $$R_c$$ is a combination of safety and helpfulness reward scores. 
+
+![ppo-reward]({{site.baseurl}}/assets/images/llama2-ppo-reward.png)
+
+Safety reward score is used if a prompt is known to produce unsafe responses or a response obtains a safety reward less than 0.15. Otherwise helpfulness reward score is used. Reward is transformed by using whiten function (which makes covariance 1) (shown by reversing the sigmoid with the logit function) in order to increase stability and balance properly with the KL penalty term (β) above.
+
+PPO hyperparamers:
+- AdamW optimizer with $$\beta_1 = 0.9$$, $$\beta_2 = 0.95$$ and $$\eps = 10^{-5}$$.
+- Weight decay of 0.1
+- Gradient clip of 1.0
+- Constant learning rate of $$10^{-6}$$
+- PPO batch size of 512
+- a PPO clip threshold of 0.2
+- a mini-batch size of 64
+- take one gradient step per mini-batch.
+- For the 7B and 13B models, we set β = 0.01 (KL penalty), and for the 34B and 70B models, we set β = 0.005.
+
+Models are trained between 200 and 400 iterations. Held-out prompts are used for early-stopping. Each PPO iteration for 70B model took average of 330 seconds. They used techniques shortly mentioned in the paper to increase batch size and speed up the process.
+
+### System Message for Multi-Turn Consistency
+
+Initial models tend to ignore system prompt after a few turns. They propose Gatt to solve the issue.
+
+**GAtt Method.**:
 
 
 
