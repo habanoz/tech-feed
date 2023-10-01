@@ -92,6 +92,8 @@ I am not sure why it is indicated to be a "pretrained chat model", it should be 
 
 *Training Objectives*: 
 
+Similar to instructGpt paper, binary ranking loss is used, with addition of a margin component. 
+
 $$\mathcal{L}_{ranking}=-log(\sigma( r_{\theta}(x,y_c) - r_{\theta}(x,y_r) - m(r) ))$$
 
 Where $$r_{\theta}(x,y_c)$$ is scalar score output for prompt $$x$$ and completion $$y$$ with model weights $$\theta$$. $$y_c$$ is preferred answer. $$y_r$$ is rejected answer. margin component $$m(r)$$ is a discrete function of preference rating.
@@ -111,5 +113,72 @@ Figure 27 of the paper shows affect of margin component on reward model output d
 
 ![reward-shift-by-margin]({{site.baseurl}}/assets/images/llama2-figure-27.png)
 
+*Data Composition*: 
+
+Public human preference data is used to bootstrap reward models. Then they are kept in collected human preference data. Authors do not comment on benefit of public human preference data except for their hopes for better generalization. They only state that they did not observe any negative transfer. 
+
+The Helpfulness reward model is trained on all Meta Helpfulness data, combined with an equal parts of the remaining data uniformly sampled from Meta Safety and from the open-source datasets. 
+
+The Meta Safety reward model is trained on all Meta Safety and Anthropic Harmless data, mixed with Meta Helpfulness and open-source helpfulness data in a 90/10 proportion. 10% helpfulness data is found to be beneficial for the accuracy on samples where both the chosen and rejected responses were deemed safe.
+
+*Training Details*:
+
+- 1 epoch over training data. Training longer may cause overfitting.
+- Learning rate $$5X10^{-6}$$ for LLAMA-70B and $$1X10^{-5}$$ for the rest.
+- Cosine learning rate scheduler down to 10% percent of initial larning rate.
+- Warm-up of 3% of total number of steps, with a maximum of 5.
+- Effective batch size is kept fixed at 512 pairs, or 1024 rows per batch.
+
+
+*Reward Model Results*:
+
+![reward-results]({{site.baseurl}}/assets/images/llama2-table-7-8.png)
+
+Authors note that each model performs better in its own domain, proving competition between the objectives. Also they note that reward model performs worse for similar responses which is not surprising.
+
+
+*Scaling Trends.*: 
+
+![reward-scaling]({{site.baseurl}}/assets/images/llama2-figure-6.png)
+
+Larger models benefit more from similar amounts of data. Authors note that the scaling performance did not show plateaue given the existing volume of data annotation used for training which indicates that there is room for more improvement with more annotations. 
+
+Authors also note that reward model performance is the most important proxy for chat model performance. While evaluating a chat model is open researh topic there is not debate over reward ranking. Thus any improvement on the reward model means improvement in the chat model. 
+
+
+#### Iterative Fine-Tuning
+
+Human preference data is collected as batches. As new batches arrive, they are used to train better reward models and collect more prompts. As a result multiple RLHF models are trained: RLHF-v1 to RLHF-v5. Two different algorithm are applied:
+- Rejection sampling fine-tunning.
+- Proximal Policy Optimization (PPO).
+
+*Rejection Sampling*: 
+
+In Reject Sampling K outputs are sampled from the model given a prompt. Best ouput is selected using the reward model. 
+
+At each iteration, all prompts are used to generate K outputs and best outputs are selected. Then selected outputs from the all previous iterations are used to finetune the model similar to SFT stage.
+
+![rejection-sampling-benefit]({{site.baseurl}}/assets/images/llama2-figure-7.png)
+
+Figure 7 of the paper shows that as K increases maximum score for the generated responses increase. High temperature value helps generating more variations. 
+
+![rejection-sampling-benefit]({{site.baseurl}}/assets/images/llama2-figure-8.png)
+
+Figure 8 of the paper shows the relationship between temparature and maximum reward by number of samples. RLHF models exhibit different temperature behaviour than SFT models.
+
+*PPO*:
+
+Pretrained language model is regarded as the policy to optimize using the following objective:
+
+$$ \arg \max_{\pi} E_{p~D, g~\pi} [R(g|p)] $$
+
+where $$p$$ is prompt sampled from dataset $$D$$, $$g$$ is generation from the policy $$\pi$$. Reward function is:
+
+$$ R(g|p) = \tilde{R}_c (g|p)  - \beta D_{KL} (\pi_{\theta}(g|p) ||  \pi_{0}(g|p)) $$
+
+which similar to instructGPT paper includes a penaly term that penalizes divergance from the initial policy.  
+
+
+
 ## References
-1. [Github Source Code](https://github.com/habanoz/crawl-for-vector-db)
+1. [LLAMA2 Paper](https://arxiv.org/pdf/2307.09288.pdf)
