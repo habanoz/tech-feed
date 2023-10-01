@@ -86,11 +86,12 @@ A reward models takes chat history and generates a scalar reward to indicate how
 
 Reward model is initialized from pretrained chat model checkpoints. This ensures that language model and reward model has the same knowledge.
 
-I am not sure why it is indicated to be a "pretrained chat model", it should be more clear to say "pretrained model", because a pretrained model becomes a chat model only after SFT stage. 
+I am not sure why it is indicated to be a "pretrained chat model", it should be more clear to say "pretrained model", because a pretrained model becomes a chat model only after SFT stage.
 
 ![Tasks]({{site.baseurl}}/assets/images/llama2-table-6.png)
 
 *Training Objectives*: 
 
+$$\mathcal{L}=-log(\sigma(r_{\theta}(x,y_c)))$$
 ## References
 1. [Github Source Code](https://github.com/habanoz/crawl-for-vector-db)
