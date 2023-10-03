@@ -15,6 +15,8 @@ tags:
 mathjax: true
 ---
 
+This article includes my notes on Llama 2 paper. All images if not stated oherwise are from the paper.
+
 ## Pretraining
 
 ### Data
@@ -187,7 +189,7 @@ Reward function $$R_c$$ is a combination of safety and helpfulness reward scores
 Safety reward score is used if a prompt is known to produce unsafe responses or a response obtains a safety reward less than 0.15. Otherwise helpfulness reward score is used. Reward is transformed by using whiten function (which makes covariance 1) (shown by reversing the sigmoid with the logit function) in order to increase stability and balance properly with the KL penalty term (β) above.
 
 PPO hyperparamers:
-- AdamW optimizer with $$\beta_1 = 0.9$$, $$\beta_2 = 0.95$$ and $$\eps = 10^{-5}$$.
+- AdamW optimizer with $$\beta_1 = 0.9$$, $$\beta_2 = 0.95$$ and $$eps = 10^{-5}$$.
 - Weight decay of 0.1
 - Gradient clip of 1.0
 - Constant learning rate of $$10^{-6}$$
@@ -205,7 +207,62 @@ Initial models tend to ignore system prompt after a few turns. They propose Gatt
 
 **GAtt Method.**:
 
+Ghost attention techique is not clearly explained in the paper. As a result I observed different interpretations. I will update this section if I come up with a better explanation.
 
+Gatt is stated to be inspired from Context Distillation method desribed in LEARNING BY DISTILLING CONTEXT paper. But what is context distillation. 
+
+#### Context distillation 
+
+Context distillation method is used to internalize details from rich detailed instructions into the model so that the model can generate answer to prompts with less details. 
+
+![context-distillation]({{site.baseurl}}/assets/images/llama2-context-distillation-figure1.png)
+Image is from LEARNING BY DISTILLING CONTEXT paper.
+
+There are two models as it is the classical distillation framework: a teacher and a student. The difference is in classical distillation model weights are different. In context distillation, student and teacher has the same weights. Teacher and student differs in the instructions they are given. 
+
+A raw input is sampled from distribution D. It is used to build teach and student prompts. Teacher prompt has more details like explanation and examples. Student prompt is simpler it only has minimal instructions and raw input. Teacher model is also allowed to generate chain of reasoning tokens which is called a scratchpad in the paper. 
+
+Given the teacher prompt, teacher model generates a response. Actual output is extracted from the response, e.g. scratchpad is stripped. Then student model is fine-tuned using simpler prompts and actual outputs from the teacher. 
+
+
+#### How Gatt works?
+
+The paper does not expose a lot of information about the process. But we can derive following information.
+
+"*Assume we have access to a multi-turn dialogue dataset between two persons (e.g., a user and an assistant), with a list of messages [u1, a1, . . . , un, an], where un and an correspond to the user and assistant messages for turn n, respectively.*"
+
+This part is clear. Basically; we have a dialogue dataset D with multiple turns e.g. n turns. 
+
+"*Then, we define an instruction, inst, that should be respected throughout the dialogue. For example, inst could be “act as.” We can then synthetically concatenate this instruction to all the user messages of the conversation.*"
+
+Now we have a synthetically created new dataset D' such that [u1+inst, a1, . . . , un+inst, an].
+
+"*Next, we can sample from this synthetic data using the latest RLHF model.*"
+
+This section is not clear. How should we sample ? I will assume we should sample next user message from D' using the latest RLHF model using a special prompt that is not disclosed in the paper e.g. given the context-dialogue generate a question that may be asked by the user. Now we have D'' such that [u1+inst, a1, . . . , un+inst, an, u(n+1),]. It is also not clear whether "u(n+1)" includes the instruction. But i expect it to include the instruction because all previous example utterances include it. Also if it is not included there is no reason to expect "a(n+1)" respect the instruction. 
+
+"*We now have a context-dialogue and the sample with which to fine-tune a model, in a process analogous to Rejection Sampling*"
+
+This section mentions that fine-tuning process to apply resembles Rejection Sampling. Remember in Rejection Sampling we sample K completions and select the best wrt. reward model. Now we have dataset D''' such that [u1+inst, a1, . . . , un+inst, an, u(n+1),a(n+1)] 
+where a(n+1) is best among K a(n+1) candidates.
+
+"*Instead of augmenting all context-dialogue turns with the instruction, we can drop it in all but the first turn, but this
+would lead to a mismatch at training time between the system message, i.e., all the intermediate assistant messages that come before the last turn, and our sample*"
+
+ In training time we want to drop all instructions from user messages from u2 to un. But this would lead to a mismatch between all the intermediate assistant messages that come before the last turn, and our sample. Why? Probably because we sampled u(n+1) using context-dialogue messages e.g. [u1+inst, a1, . . . , un+inst, an]. I cannot see how but this is my interpretation. 
+
+ "* To fix this issue, which could hurt the training, we simply set the loss to 0 for all the tokens from the previous turns, including assistant messages.*"
+
+ In training we drop all instructions except for the first user message and zero out loss for all tokens contained in the context dialogue. Now we have [u1+inst, a1, . . . , un, an, u(n+1),a(n+1)]. And loss is only calculated for last turn messages e.g. u(n+1),a(n+1). Since first user message includes the instruction generated model response has to follow the same instruction (in supervised fine tunning it has to match a(n+1)), it learns to follow instruction regardless of number of dialog turns, which is in essence similar to context distillation. 
+
+ However, we assumed u(n+1) to include the instruction. If that is the case, then a(n+1) has to follow the instruction regardless of u1 having the instruction. So, my interpretation cannot be correct. 
+
+Also note that, we added instructions to a given dialog. Let's say the instruction is act like Sheakspear, but the answer was generated without the instruction, so it does not act like Sheakspear. Is not this a problem? So it is necessary to zero out the loss for context-dialogue tokens without any further reason e.g. the reason mentioned in the paper. Another problem is, all user messages include an instruction that is not followed by the assitance answers then this my encourage RLHF model to generate an answer that ignores the instruction.
+
+I will update this section as new information comes out or my understanding improves.
 
 ## References
 1. [LLAMA2 Paper](https://arxiv.org/pdf/2307.09288.pdf)
+2. [Gatt by Philipp Schmid](https://twitter.com/_philschmid/status/1692222511612637201)
+3. [LEARNING BY DISTILLING CONTEXT](https://arxiv.org/pdf/2209.15189.pdf)
+4. [LEARNING BY DISTILLING CONTEXT: a video from first author](https://www.youtube.com/watch?v=IKtAFLUAYvM&t=1756s)
