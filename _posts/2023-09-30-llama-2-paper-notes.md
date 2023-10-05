@@ -19,6 +19,8 @@ This article includes my notes on Llama 2 paper. All images if not stated oherwi
 
 ## Pretraining
 
+![gpu-times]({{site.baseurl}}/assets/images/llama2-table-2.png)
+
 ### Data
 - 2 trillion tokens: for a good perfermance cost trade off
 - up-sampling factual sources
@@ -371,6 +373,77 @@ If model responses are good, safety context distillation can still cause degreda
 
 ### Red Teaming
 
+Red teaming involved 350 people from  various domains (ybersecurity, elec-tion fraud, social media misinformation, legal, policy, civil rights, ethics, software engineering, machine learning, responsible AI, and creative writing.). 
+
+After each red teaming exercise, analysis are performed oncollected data, including dialogue length, risk area distribution, histogram of topic of misin-formation (where appropriate), and rated degree of risk. Lessons are taken as a guide to help model safet training improvements. Probably some of the data from the exercise are added fine-tunning dataset. 
+
+
+#### Safety Evaluation of Llama 2-Chat
+
+**Safety Human Evaluation**: 2000 adversarial prompts are collected for safety human evaluation. Raters judged the models according to 5-point likert scale (5- no violation and helpful, 1- severe violation). Figure 17 of the paper shows the results.
+
+![safety-measure]({{site.baseurl}}/assets/images/llama2-figure-17.png)
+
+- 1 and 2 are used as violation. 
+- Violation percentage is used as the main evaluation metric.
+- Mean rating is used as a supplement.
+- Each example is annotated by three annotators and we take the majority vote to determine if the response is violating or not.
+- Used Gwet’s AC1/2 statistic to measure inter-rater reliability (IRR).
+- Multi-turn conversations are more prone to inducing unsafe responses
+
+![violation-percentage]({{site.baseurl}}/assets/images/llama2-figure-18.png)
+
+**Truthfulness, Toxicity, and Bias**: The fine-tuned Llama 2-Chat is far more better than the pretrained Llama 2 in terms of truthfulness (50.18 → 64.14 for 70B) and toxicity (24.60 → 0.01 for 70B). 
+
+![llm-evaluations]({{site.baseurl}}/assets/images/llama2-table-14.png)
+
+- Even with proficient annotators, each write with significant variation.  
+- A model fine-tuned on SFT annotations learns this diversity, includingü unfortunately, poor annotations.
+- The model’s performance is capped by the writing abilities of the most skilled annotator. 
+- Humans are better in comparing two outputs. Humans are not that great at writing annoations.
+- During annotation, the model has the potential to explore into writing trajectories that even the
+best annotators may not explore. Even then humans can effectively compare them.
+- "while we may not all be accomplished artists, our ability to appreciate and critique art remains intact"
+- Superior writing abilities of LLMs, as manifested in surpassing human annotators in certain tasks, are fundamentally driven by RLHF.
+- Consequently, the reward mechanism swiftly learns to assign low scores to undesirable tail-end
+distribution and aligns towards the human preference.
+- This phenomena can be seen in Figure 20 of the paper, where it is shown that the worst answers are progressively removed, shifting the distribution to the right.
+- Supervised data may no longer be the gold standard, and this evolving circumstance compels a re-evaluation of the concept of "supervision".
+
+## Discussion
+
+### Learnings and Observations
+
+**Beyond Human Supervision**: Authors admit that many of the researhes were skeptic about RL. However, RL turned out to be highly effective considering its cost and time effectiveness. They attribute success of RLHF to synergy it fosters between humans and LLMs
+throughout the annotation process.
+
+![reward-distribution-shift]({{site.baseurl}}/assets/images/llama2-figure-20.png)
+
+**In-Context Temperature Rescaling**: Temperature appears to be influenced by RLHF as it is shown in Figure 8 of the paper. Shifts are not similar for all prompt types, as shown in figure 21 of the paper. In creative prompts, RLHF behaves somewhat similar to SFT, as temperature increase diversity increase. But in factual prompts, RLHF prompts despite increased temperature remains to be factual and less diverse. 
+
+![rlhf-temperature-adapt]({{site.baseurl}}/assets/images/llama2-figure-21.png)
+
+**Llama 2-Chat Temporal Perception**: To teach concept of time, 1000 SFT examples related to specific dates are collected e.g. How long How long ago did Barack Obama become president? Each example contained two types of metadata:
+- Query date: Response changes according to query date. For example, the answer to “How long ago did Barack Obama become president?” would be different in 2020 compared to 2025.
+- Event date:  A point in time prior to which the question would be nonsensical. For example, asking “How long ago did Barack Obama become president?” would not make sense before he actually became president. 
+
+![time-awareness]({{site.baseurl}}/assets/images/llama2-figure-22.png)
+
+This observation suggest that LLMs can have a better understanding of time than it is previously assumed. This is an interesting finding given that LLMs are trained using next token prediction on data that is randomly shuffled without any regard to chronological context. 
+
+
+**Tool Use Emergence**: As it is shown in Figure 23 of the paper, despite never having been trained to use tools, the model demonstrates the capability to utilize a sequence of tools in a zero-shot context.
+
+### Limitations and Ethical Considerations
+
+Llama 2 chat is subject to limitations of auto-regressive LLMs:
+- Knowledge cut-off
+- Hallucination
+- Potential for non-factual generation such as unqualified advice,
+
+Llama2 is trained primarily on English data. Its abilities in other languages are limited.
+
+Llama2 may generate false refusal of prompts due to overly cautios safety considerations.
 
 
 ## References
