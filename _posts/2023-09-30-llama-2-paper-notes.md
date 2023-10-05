@@ -207,13 +207,11 @@ Initial models tend to ignore system prompt after a few turns. They propose Gatt
 
 **GAtt Method.**:
 
-Ghost attention techique is not clearly explained in the paper. As a result I observed different interpretations. I will update this section if I come up with a better explanation.
-
 Gatt is stated to be inspired from Context Distillation method desribed in LEARNING BY DISTILLING CONTEXT paper. But what is context distillation. 
 
 #### Context distillation 
 
-Context distillation method is used to internalize details from rich detailed instructions into the model so that the model can generate answer to prompts with less details. 
+Context distillation method is used to internalize details from rich detailed instructions into the model so that the model can generate accurate answers to prompts with less details. 
 
 ![context-distillation]({{site.baseurl}}/assets/images/llama2-context-distillation-figure1.png)
 Image is from LEARNING BY DISTILLING CONTEXT paper.
@@ -227,42 +225,139 @@ Given the teacher prompt, teacher model generates a response. Actual output is e
 
 #### How Gatt works?
 
-The paper does not expose a lot of information about the process. But we can derive following information.
+I believe the explanation in the paper is not very good. Thanks to a post from one of the authors, Xavier Martinet, to the huggingface community page, we can have a better understanding of Gatt.
 
-"*Assume we have access to a multi-turn dialogue dataset between two persons (e.g., a user and an assistant), with a list of messages [u1, a1, . . . , un, an], where un and an correspond to the user and assistant messages for turn n, respectively.*"
+Suppose we have a N turn dialogue: [u1, a1, ..., un, an]. Select an instruction, e.g.  "Act as if you were Napoleon who like playing cricket."(taken from the post). Now concatenate the instruction to all user messages and sample the assistant responses. Now we have a N turn dialogue [u1+inst, a1', ..., un+inst, an']. Note that assistant messages are now denoted with a prime which indicates they are sampled from RLHF model after instruction concataneted to user message. 
 
-This part is clear. Basically; we have a dialogue dataset D with multiple turns e.g. n turns. 
+In training time, instructions are removed from the user messages. Instead it is prepended as a system message and we have [inst, u1, a1', ..., un, an']. Each sample S in the dialogue is used to fine tune the model. Loss for the token before the sample S is zeroed out. 
 
-"*Then, we define an instruction, inst, that should be respected throughout the dialogue. For example, inst could be “act as.” We can then synthetically concatenate this instruction to all the user messages of the conversation.*"
+For example, assume N is 3, we would have a synthetic dataset like [inst, u1, a1, u2, a2, u3, a3]. We can use this dialgue to fine-tune our model 3 times:
+-  Use [inst, u1] to predict a1, only compute loss using a1 and predicted a1.
+-  Use [inst, u1, a1, u2] to predict a2, only compute loss using a2 and predicted a2.
+-  Use [inst, u1, a1, u2, a2, u3] to predict a3, only compute loss using a3 and predicted a3.
 
-Now we have a synthetically created new dataset D' such that [u1+inst, a1, . . . , un+inst, an].
+#### Gatt Results
 
-"*Next, we can sample from this synthetic data using the latest RLHF model.*"
+Gatt is applied after RLHF V3 stage. When a new instruction used, one that is not used in training, Gatt is found to be consistent upto 20+ turns. 
 
-This section is not clear. How should we sample ? I will assume we should sample next user message from D' using the latest RLHF model using a special prompt that is not disclosed in the paper e.g. given the context-dialogue generate a question that may be asked by the user. Now we have D'' such that [u1+inst, a1, . . . , un+inst, an, u(n+1),]. It is also not clear whether "u(n+1)" includes the instruction. But i expect it to include the instruction because all previous example utterances include it. Also if it is not included there is no reason to expect "a(n+1)" respect the instruction. 
+Gatt is also applied to a LLAMA 1 model that is fine-tuned to have 4096 token context window (base model only has a token window of 2048). The paper suggests evidence on usability of Gatt as a general mothod for long context attention. (See Appendix A.3.5)
 
-"*We now have a context-dialogue and the sample with which to fine-tune a model, in a process analogous to Rejection Sampling*"
 
-This section mentions that fine-tuning process to apply resembles Rejection Sampling. Remember in Rejection Sampling we sample K completions and select the best wrt. reward model. Now we have dataset D''' such that [u1+inst, a1, . . . , un+inst, an, u(n+1),a(n+1)] 
-where a(n+1) is best among K a(n+1) candidates.
+### RLHF Results
 
-"*Instead of augmenting all context-dialogue turns with the instruction, we can drop it in all but the first turn, but this
-would lead to a mismatch at training time between the system message, i.e., all the intermediate assistant messages that come before the last turn, and our sample*"
+#### Model-Based Evaluation
 
- In training time we want to drop all instructions from user messages from u2 to un. But this would lead to a mismatch between all the intermediate assistant messages that come before the last turn, and our sample. Why? Probably because we sampled u(n+1) using context-dialogue messages e.g. [u1+inst, a1, . . . , un+inst, an]. I cannot see how but this is my interpretation. 
+The paper notes that human evaluation is gold standard in model evaluation but also states problems with it. It proposes a model based evaluation approach. 
 
- "* To fix this issue, which could hurt the training, we simply set the loss to 0 for all the tokens from the previous turns, including assistant messages.*"
+In model based evaluation, reward improvement is used to select best-performing models among several ablations at each iteration from RLHF-V1 to V5. Then major model versions were validated with human evaluations.
 
- In training we drop all instructions except for the first user message and zero out loss for all tokens contained in the context dialogue. Now we have [u1+inst, a1, . . . , un, an, u(n+1),a(n+1)]. And loss is only calculated for last turn messages e.g. u(n+1),a(n+1). Since first user message includes the instruction generated model response has to follow the same instruction (in supervised fine tunning it has to match a(n+1)), it learns to follow instruction regardless of number of dialog turns, which is in essence similar to context distillation. 
+**How Far Can Model-Based Evaluation Go?**: They compared reward model results with human annototators preferences (3 annotators, 7-point Likert scale based annotations ). Figure 29 of the paper suggests that reward model is well aligned with human preferences.
 
- However, we assumed u(n+1) to include the instruction. If that is the case, then a(n+1) has to follow the instruction regardless of u1 having the instruction. So, my interpretation cannot be correct. 
+Additionally they trained a new reward model that is trained on diverse open-source Reward Modeling datasets. New reward model is used to ensure that meta reward models do not divert from human preferences.
 
-Also note that, we added instructions to a given dialog. Let's say the instruction is act like Sheakspear, but the answer was generated without the instruction, so it does not act like Sheakspear. Is not this a problem? So it is necessary to zero out the loss for context-dialogue tokens without any further reason e.g. the reason mentioned in the paper. Another problem is, all user messages include an instruction that is not followed by the assitance answers then this my encourage RLHF model to generate an answer that ignores the instruction.
+As a last verification step, they compared resuls of the last model and new model. In next annotation iteration, both models are used to sample from for diversity and comparison on new prompts. 
 
-I will update this section as new information comes out or my understanding improves.
+![reward-model-human-preference-alingment]({{site.baseurl}}/assets/images/llama2-figure-29.png)
+
+**Progression of Models**:   
+
+In figure 11 of the paper, harmlessness and helpfullness of llama-2 chat models compared to ChatGPT is shown. Judgenements are based on meta reward models (which indicates bias) and GPT-4 (ChatGPT and Llama 2-Chat outputs appeared in GPT-4 prompt are randomly swapped to avoid any bias). 
+
+Validation set contains 1586 safety and 584 helpfulness prompts.
+
+#### Human Evaluation
+
+Finally human evaluation is used to judging the models. 4000 single and multi-turn prompts are used. Llama-2-chat models are compared to Falcon, MPT, Vicuna, ChatGPT and PaLM.   
+
+![human-evaluation-helpfulness]({{site.baseurl}}/assets/images/llama2-figure-12.png)
+
+- Llama 2-Chat 70B model is competitive with ChatGPT.
+- Llama 2-Chat 70B model outperforms PaLM-bison chat model by a large percentage
+
+**Inter-Rater Reliability (IRR)**: In this sub-section authors notes some limitations of human evaluation. In summary they note objectivity of the result and state that evaluation on a different set of prompts or with different instructions could result in different results.
+
+## Safety
+
+### Safety in Pretraining
+
+One interesting point in Llama2 pretraining is that toxic data is not removed from pretraining dataset for a better downstream generalization. The paper presents how some groups that common source of bias are represented in the pre-training dataset. 
+
+Pre-training dataset mostly contains English data (89.7%). Rest of the data contains code (8.38%) and other languages. 
+
+![evoluation of llama2-chat]({{site.baseurl}}/assets/images/llama2-figure-11.png)
+
+**Safety Benchmarks for Pretrained Models**: Safety evaluation has three dimensions:
+- Truthfulness: TruthfulQA is used to measure how well LLM generates factually reliable answers
+- Toxicity: Toxigen is used to measure amount of toxic output generation.
+- Bias: BOLD is used to measure the sentiment in model generations may vary with demographic attributes.
+
+![llama2-chat-safety-truthfulness]({{site.baseurl}}/assets/images/llama2-table-44.png)
+![llama2-chat-safety-toxicity]({{site.baseurl}}/assets/images/llama2-table-45.png)
+![llama2-chat-safety-race]({{site.baseurl}}/assets/images/llama2-table-46.png)
+![llama2-chat-safety-gender]({{site.baseurl}}/assets/images/llama2-table-47.png)
+
+### Safety Fine-Tuning
+
+#### Safety Categories and Annotation Guidelines
+
+Annotators are instructed to create adverserial prompts along two dimensions:
+- A risk category: A topic an LLM an potentialy create unsafe content.  There are tree main risk categories: illicit and criminal activities (e.g., terrorism, theft, human trafficking); hateful and harmful activities (e.g., defamation, self-harm, eating disorders discrimination); and unqualified advice (e.g., medical advice, financial advice, legal advice). 
+
+- An attack vector: A question style to cover different prompts that can produce unsafe output. For example:  psychological manipulatio (e.g., authority manipulation), logic manipulation (e.g., false premises), syntactic manipulation (e.g., misspelling), semantic manipulation (e.g., metaphor), perspective manipulation (e.g., role playing), non-English languages, and others.
+
+Then best practices for safe and helpful model responses are defined:
+- The model should first address immediate safety concerns if applicable
+- Address the prompt by explaining the potential risks to the user
+- Provide additional information if possible. 
+
+Annotator responses cannot do following:
+- Promote or enable criminal activities.
+- Promote or enable dangerous behaviors to the user or other people.
+- Contain, promote or enable offensive and abusive behavior towards the user or other people.
+- Contain, promote or enable sexually explicit content. 
+
+#### Safety Supervised Fine-Tuning
+
+Collected annotations are used to fine-tune the models. 
+
+#### Safety RLHF
+
+In early work authors observe that fine-tuned models observed to generate safe outputs. The interesting observation is that when the model outputs safe responses, they are often more detailed than what the average annotator writes, which shows generalization capability of the LLMs.  As a result, they only collected a few thousands supervised annotations.
+
+RLHF is applied for more nuanced responses and harder jail breaking. 
+
+**Better Long-Tail Safety Robustness without Hurting Helpfulness**: Safety is inherently a long-tail problem. 
+
+Two models are trained to compare effect of safety rlhf: one without adversarial prompts in the RLHF stage and one with them. Results clearly show benefit of safety prompts in RLHF. Another observation is that helpfulness score distribution is preserved after safety tuning with RLHF. 
+
+![llama2-safety-rlhf]({{site.baseurl}}/assets/images/llama2-figure-14.png)
+
+Following example shows benefit of RLHF.
+
+![llama2-safety-rlhf]({{site.baseurl}}/assets/images/llama2-table-12.png)
+
+**Impact of Safety Data Scaling**: To better understand how the amount of safety data affects model performance,   authors increased amount of safety data used in RLHF stage, starting from 0 up to ∼0.1M samples, while keeping helpfulness data fixed (∼0.9M samples).
+
+They observe that when amount of safety data is increased, the model’s performance on handling adversarial prompts improves dramatically, with a lighter tail in the safety reward model score distribution. Meanwhile, the mean helpfulness score remains constant. It is hypothesized that this is because there is a sufficiently large amount of helpfulness training data.
+
+![llama2-safet-data-amount]({{site.baseurl}}/assets/images/llama2-figure-15.png)
+
+**Measure of False Refusal**: A model with more safety mitigation answers certain questions in a more conservative manner. A study is conducted to measure false refusal to quantify the frequency that the model incorrectly refuses to answer non-adversarial prompts e.g. false refusal as the model incorrectly refusing to answer legitimate user prompts due to irrelevant safety concerns.
+
+A classifier is trained for detecting refusals and used on responses for two test datasets: helpfulness dataset and a borderline test set consisting of 210 samples.
+
+With more safety data used, false-refusal rates increases. For helpfulness dataset it remains at 0.05%. However, for borderline dataset, which is hard, increases upto 28%.
+
+![false-refusal]({{site.baseurl}}/assets/images/llama2-figure-33.png)
+
+
+#### Context Distillation for Safety
+
+******
 
 ## References
 1. [LLAMA2 Paper](https://arxiv.org/pdf/2307.09288.pdf)
 2. [Gatt by Philipp Schmid](https://twitter.com/_philschmid/status/1692222511612637201)
-3. [LEARNING BY DISTILLING CONTEXT](https://arxiv.org/pdf/2209.15189.pdf)
-4. [LEARNING BY DISTILLING CONTEXT: a video from first author](https://www.youtube.com/watch?v=IKtAFLUAYvM&t=1756s)
+3. [Community page on Hugging Face](https://huggingface.co/papers/2307.09288)
+4. [LEARNING BY DISTILLING CONTEXT](https://arxiv.org/pdf/2209.15189.pdf)
+5. [LEARNING BY DISTILLING CONTEXT: a video from first author](https://www.youtube.com/watch?v=IKtAFLUAYvM&t=1756s)
