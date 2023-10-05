@@ -353,7 +353,25 @@ With more safety data used, false-refusal rates increases. For helpfulness datas
 
 #### Context Distillation for Safety
 
-******
+Authors observed that the safety capabilities of LLMs can be efficiently enhanced by prefixing the model with a safety preprompt (e.g., “You are a safe and responsible assistant”). They use pre-prompts to generate improved safe answers from the models and used the generated data (without pre-prompt) for context distillation to improve safety responses.  
+
+Figure 39 of the paper shows example safety pre-prompts. Those examples can be useful as a system prompt to the llama2-chat models.
+
+![safety-pre-prompts]({{site.baseurl}}/assets/images/llama2-figure-39.png)
+
+
+**Context Distillation with Answer Templates**: Annotators provided assign risk categories  for the safety prompts. This allows providing answer templates based on identified risk categories. Figure 16 of the paper shows affect of context distillation with and without answer templates. Answer templates seems to improve reward scores further.  
+
+**Rejecting Context Distillation Errors with the Safety Reward Model**:  Performing safety context distillation for helpful prompts can degrade model performance and lead to more false refusals. Therefore, safety context distillation is only applied to adversarial prompts.
+
+If model responses are good, safety context distillation can still cause degredation. Therefore, context distillation is only used on prompts where it improves the results, based on the safety reward model.   
+
+![safety-context-distillation]({{site.baseurl}}/assets/images/llama2-figure-16.png)
+
+
+### Red Teaming
+
+
 
 ## References
 1. [LLAMA2 Paper](https://arxiv.org/pdf/2307.09288.pdf)
