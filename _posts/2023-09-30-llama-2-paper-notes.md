@@ -80,13 +80,20 @@ RLHF procedure is needed to further align model with human preferences and istru
 is safe and the other response is not, 2) both responses are safe, and 3) both responses are unsafe, with
 18%, 47%, and 35% of the safety dataset falling into each bin, respectively.
 - Human annotations are collected in a weekly basis. Annotations are used to improve reward model. Better reward models are used to train better chat models. 
-- Over 1M binary comparisons are collected in 14 batches (according to Table 26 of the paper)
+- Over 1M binary comparisons are collected in 14 batches on a weekly bases.
+- Average number of tokens increase over batches.
+- With better-performing Llama 2-Chat models used for response sampling over time, it becomes challenging for annotators to select a better one from two equally high-quality responses.
+- Curriculum annotation strategy: With the first model, the annotators were asked to make prompts relatively simple, and then to progressively move towards more complex prompts and teaching new skills to Llama 2-Chat.
 
 ![table26-preference-data]({{site.baseurl}}/assets/images/llama2-table-26.png)
 
+![Distribution of human preference data rating over batches]({{site.baseurl}}/assets/images/llama2-figure-25.png)
+
 #### Reward Modeling
 
-A reward models takes chat history and generates a scalar reward to indicate how well the generated answer does. Safety and helpfulness are competing objectives. It is easier to train separate reward models for each objective.
+A reward models takes chat history and generates a scalar reward to indicate how well the generated answer does. Safety and helpfulness are competing objectives. It is easier to train separate reward models for each objective. The tension between safety and helpfulness can be seen in figure 32 of the paper.
+
+![competing-obectives]({{site.baseurl}}/assets/images/llama2-figure-32.png)
 
 Reward model is initialized from pretrained chat model checkpoints. This ensures that language model and reward model has the same knowledge.
 
@@ -269,12 +276,37 @@ Validation set contains 1586 safety and 584 helpfulness prompts.
 
 #### Human Evaluation
 
-Finally human evaluation is used to judging the models. 4000 single and multi-turn prompts are used. Llama-2-chat models are compared to Falcon, MPT, Vicuna, ChatGPT and PaLM.   
+Finally human evaluation is used to judging the models. 4000 single and multi-turn prompts are used. Llama-2-chat models are compared to Falcon, MPT, Vicuna, ChatGPT and PaLM.
+
+- Llama 2-Chat 70B model is competitive with ChatGPT.
+- Llama 2-Chat 70B model outperforms PaLM-bison chat model by a large percentage.
 
 ![human-evaluation-helpfulness]({{site.baseurl}}/assets/images/llama2-figure-12.png)
 
-- Llama 2-Chat 70B model is competitive with ChatGPT.
-- Llama 2-Chat 70B model outperforms PaLM-bison chat model by a large percentage
+**Prompts and Generations**:
+- Single turn prompts collected manually including: factual questions, writing and content creation, language assistance, recommendations, and dialogue.
+- Multi-turn prompts are collected by interacting with ChatGPT and Llama 2-Chat.  
+- Annotators allowed to select up to two categories for multi-turn prompts.
+- Table 33 of the paper shows example prompts.
+- Open source models are evaluated using 2K context length
+- Closed source models are evaluated using 4K context length
+- Table 31 of the paper shows systems prompts used for evaluation.
+
+![human-eval-system-prompts]({{site.baseurl}}/assets/images/llama2-table-31.png)
+
+![human-eval-prompts]({{site.baseurl}}/assets/images/llama2-table-33.png)
+
+![impact-of-system-prompt]({{site.baseurl}}/assets/images/llama2-figure-30.png)
+
+**Evaluation Methodology**: Annotators asked following questions:
+
+They are asked to answer the following question:
+Considering both model responses, which is better (helpful while also being safe and honest), Model A or Model B?
+
+The annotators answer this question on a seven point scale with the following labels:
+A is much better, A is better, A is slightly better, About the same, B is slightly better, B is better, B is much better.
+
+3 annotators rate each generation pair. Prior experiments with 5 annotators did not change the results or inter-annotator agreement significantly. 
 
 **Inter-Rater Reliability (IRR)**: In this sub-section authors notes some limitations of human evaluation. In summary they note objectivity of the result and state that evaluation on a different set of prompts or with different instructions could result in different results.
 
