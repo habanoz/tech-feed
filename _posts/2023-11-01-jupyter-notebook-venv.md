@@ -1,7 +1,7 @@
 ---
 layout: single
 classes: wide
-title:  "Running Jupyter Notebooks in Virtuan Environments"
+title:  "Running Jupyter Notebooks in Virtual Environments"
 categories:
   - best-practices
 
