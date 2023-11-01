@@ -10,13 +10,15 @@ tags:
   - jupyter
 ---
 
-As of 2023 November, jupyter notebooks still does not support working with virtuan environments. 
-Using global environment causes all sort of troubles. It is possible to add custom kernels to jupyter notebooks but it is a little bit involved. 
+As of 2023 November, jupyterlab still does not support working with virtual environments. 
+Using global environment causes all sort of troubles. It is possible to add custom kernels to jupyterlab but it is a little bit involved. 
 
-Finally, i decided to create bash aliases to simplify the process. Adding following code to `.bashrc` file allows us to create a specific environment to work with jupyter lab.
+Finally, i decided to create bash aliases to simplify the process. Adding following code to `.bashrc` file allows to create a specific environment to work with jupyter lab.
 
-The idea is to create a virtual disposable virtual environment. Work on it. Eventually remove it.
+The idea is to create a virtual environment, work on it and eventually remove it. In this flow, if notebook file should is necessary, it needs needs to backed up. This script can be customized to create different flows.
 
+
+## Scripts
 
 ```bash
 
@@ -46,6 +48,7 @@ function delete_nb_env() {
 alias rmnbenv=delete_nb_env
 ```
 
+
 `/venv` is a sybolic link to any directory you want to keep virtual environments. I prefer '~/workspace/venv'. 
 
 ```bash
@@ -55,7 +58,7 @@ sudo chown /venv myuser
 ```
 
 
-Example usage:
+## Example usage:
 
 ```bash
 mknbenv jupyter_env_1 3.10
