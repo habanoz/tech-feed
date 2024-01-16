@@ -54,7 +54,7 @@ This article includes my notes on Llama 2 paper. All images if not stated oherwi
 - By setting aside millions of examples from third-party datasets and using fewer but higher-quality examples from vendor-based annotation efforts, results notably improved. (Quality Is All You Need)
 - A limited set of clean instruction-tuning data can be sufficient to reach a high level of quality
 - SFT annotations in the order of tens of thousands was enough to achieve a high-quality result. Stopped annotating SFT after collecting a total of 27,540 annotations.
-- Another bservation is that different annotation platforms and vendors can result in markedly different down-stream model performance, highlighting the importance of data checks even when using vendors to source annotations.
+- Another observation is that different annotation platforms and vendors can result in markedly different down-stream model performance, highlighting the importance of data checks even when using vendors to source annotations.
 - A surprising finding is that the outputs sampled from the resulting SFT model were often competitive with SFT data handwritten by human annotators, suggesting that authors could reprioritize and devote more annotation effort to preference-based annotation for RLHF.
 
 #### Fine-Tuning Details
@@ -430,7 +430,7 @@ After each red teaming exercise, analysis are performed oncollected data, includ
 ![llm-evaluations]({{site.baseurl}}/assets/images/llama2-table-14.png)
 
 - Even with proficient annotators, each write with significant variation.  
-- A model fine-tuned on SFT annotations learns this diversity, includingü unfortunately, poor annotations.
+- A model fine-tuned on SFT annotations learns this diversity, including unfortunately, poor annotations.
 - The model’s performance is capped by the writing abilities of the most skilled annotator. 
 - Humans are better in comparing two outputs. Humans are not that great at writing annoations.
 - During annotation, the model has the potential to explore into writing trajectories that even the
