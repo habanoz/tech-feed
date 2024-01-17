@@ -104,6 +104,18 @@ Importantly, the examples are weighted by how much higher the implicit reward mo
 
 ### DPO Outline
 
+General DPO pipeline:
+
+- Sample completions y1, y2 from reference policy (e.g. SFT model), for each prompt x. Label completions with human preferences to construct the offline dataset of preferences, D.
+- Optimize the language model $$\pi_\theta$$ to minimize DPO loss for the given $$\pi_\ref$$ and dataset D and desired β. 
+
+In practice, one would like to reuse prference datasets publicly available, instead of creating a new preference dataset. 
+Since preference datasets are sampled using $$\pi^{SFT}$$, we initialize $$\pi_{ref} = \pi^{SFT}$$ whenever available. 
+However, when $$\pi^{SFT}$$ is not available, we initialize $$\pi_{ref}$$ by maximizing likelihood of preferred completions (y, yw), that is, $$\pi_{ref} = arg max E_{x, y_w ~ D} [ log \pi (y_w, x) ] $$, which is analogous to Supervised Fine-Tuning.
+This procedure helps mitigate the distribution shift between true reference distribution which is unavailable, and $$\pi_{ref}$$ used by DPO. 
+
+## Experiments
+
 
 
 ## References
