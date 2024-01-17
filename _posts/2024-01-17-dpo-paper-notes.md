@@ -93,10 +93,16 @@ Equation 7 resembles equation 2 where reward based log-likelihood loss is define
 
 In equation 7 ![formulae-7-1]({{site.baseurl}}/assets/images/dpo-formulae-7-1.png) can be viewed as implicit reward function. 
 
-
-
 ### What does the DPO update do?
 
+Gradient of the DPO loss function with respect to parameters θ is:
+
+![formulae-7-grad]({{site.baseurl}}/assets/images/dpo-formulae-7-grad.png)
+
+Intiutively, gradient of the loss function increases the likelihood of the preferred completions and decreases the likelihood of dispreferred completions. 
+Importantly, the examples are weighted by how much higher the implicit reward model $$\hat(r)_\theta$$ rates the dispreferred completions, scaled by β, i.e, how incorrectly the implicit reward model orders the completions, accounting for the stregth of the KL constraint. Experiments show that this weighting prevents model degeneration. 
+
+### DPO Outline
 
 
 
