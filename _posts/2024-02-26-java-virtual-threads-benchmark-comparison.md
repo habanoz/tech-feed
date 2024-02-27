@@ -13,7 +13,7 @@ tags:
   - docker
 ---
 
-The much-anticipated Virtual Threads feature has finally been included as a standard in Java 21 LTS, promising to revolutionize the Java ecosystem. 
+The much-anticipated Virtual Threads feature finally included as a standard feature in Java 21 LTS, promising to revolutionize the Java ecosystem. 
 This post aims to explore the performance implications of utilizing virtual threads.
 
 
@@ -70,7 +70,7 @@ Application 3
 
 ## Analysis
 
-All applications were configured similarly, with the exception of the thread settings. Therefore, it’s reasonable to ascribe all observed differences to these thread settings.
+All applications were configured similarly, with the exception of the thread settings. Therefore, it’s reasonable to ascribe all observed differences to these thread settings. (It turns out this is not completely correct, because R2DBC probably involves different approaches.)
 
 ### Requests Per Second
 
