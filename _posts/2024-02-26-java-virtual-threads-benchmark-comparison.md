@@ -25,7 +25,7 @@ One short-coming of using a thread pool arises when a substantial number of thre
 
 Asynchronous programming has been the answer to scalability issues. Tasks typically wait in a queue and are processed by a pool of threads. The task initiator receives a future object and doesn’t wait for the task to complete, thus avoiding blocking. The future object is used to decide the next steps based on the task’s result. This approach eventually evolved into reactive programming, which I perceive as asynchronous programming with an added rate limiting feature (since task queues have size limits and cannot expand indefinitely).
 
-While asynchronous programming offers benefits, it doesn’t come without its drawbacks. Asyncronous code is unfortunately much harder to read, understand and debug.
+While asynchronous programming offers benefits, it doesn’t come without its drawbacks. Asynchronous code is unfortunately much harder to read, understand and debug.
 
 Virtual threads offer the prospect of scalability while maintaining the ease of readability and debugging.
 
@@ -40,7 +40,7 @@ The application comes in three different versions:
 
 - The first version is a traditional synchronous JDBC application that relies on OS threads.
 - The second version, while still a synchronous JDBC application, utilizes virtual threads.
-- The third version is a reactive application that eliminates blocking calls. It employs webflux and r2dbc for fully reactive execution.
+- The third version is a reactive application that eliminates blocking calls. It employs WebFlux and R2DBC for fully reactive execution.
 
 To test the application’s performance, k6 is employed to simulate user load. The number of virtual users is gradually ramped up to 500, held steady for a period, and then gradually reduced. All three applications are tested under the same setting. 
 
@@ -80,17 +80,17 @@ In the tests, RPS happened to be just below 2K for all the applications. Due to 
 
 As the number of users grows, the thread count of Application 1 also rises. The default limit for Tomcat threads in Spring Boot is 200, and as expected, the thread count ceases to increase around this number. Such an increase in thread count is not observed in Applications 2 and 3.
 
-**Despite the increase in thread count, there is no significant impact on the heap size, which remains remains relatively stable.** It is believed that each thread contributes a 1m to memory consumption, which is definetly not the case. **In contrast, Applications 2 and 3 consume more heap space, which is contrary to expectations.** Repeated tests have consistently produced similar results, suggesting that this is not a mere coincidence but a phenomenon worth investigating. However, such an investigation falls outside the scope of this study.
+**Despite the increase in thread count, there is no significant impact on the heap size, which remains relatively stable.** It is believed that each thread contributes a 1m to memory consumption, which is definitely not the case. **In contrast, Applications 2 and 3 consume more heap space, which is contrary to expectations.** Repeated tests have consistently produced similar results, suggesting that this is not a mere coincidence but a phenomenon worth investigating. However, such an investigation falls outside the scope of this study.
 
 ### Request Duration
 
 This metric is crucial to consider as it directly impacts the user experience. The use of virtual threads demonstrated a noticeable influence on this metric.
 
-Minimum request duration shows a clearly distinct behaviour. Application 1 shows a relatively low minimum request duration until threads are saturated by the users. During the tests Application 2 manages to keep minimum request duration low. Application 3 from start has minimum request duration close to maximum request duration. This is an interesting observation and deserves further investigation. But it is not within the scope of this study. 
+Minimum request duration shows a clearly distinct behavior. Application 1 shows a relatively low minimum request duration until threads are saturated by the users. During the tests Application 2 manages to keep the minimum request duration low. Application 3 from the start has a minimum request duration close to the maximum request duration. This is an interesting observation and deserves further investigation. However, it is not within the scope of this study. 
 
-In all applications, p90 (also p95) and maximum request duration show similar behaviour. As test progress, p90 moves past 128ms mark and closes up to 256ms mark. This is probably as a result of database response times varying as pressure on db reasources tightens. Application 1 shows the worst durations after thread saturation occurs. 
+In all applications, p90 (also p95) and maximum request duration show similar behavior. As the test progresses, p90 moves past the 128ms mark and closes up to the 256ms mark. This is probably a result of database response times varying as pressure on DB resources tightens. Application 1 shows the worst durations after thread saturation occurs. 
 
-Application 3 shows very stable request durations. Application 1 and Application 2 shows relatively high gap between minimum and maximum request durations, which suggests database or database layer can reply some request very quickly. However, such low minimum request durations are not observed with Application 3. This suggests that there are differences in the behavior of the JDBC and R2DBC layers. 
+Application 3 shows very stable request durations. Application 1 and Application 2 show a relatively high gap between minimum and maximum request durations, which suggests database or database layer can reply to some requests very quickly. However, such low minimum request durations are not observed with Application 3. This suggests that there are differences in the behavior of the JDBC and R2DBC layers. 
 
 ## Conclusion
 
