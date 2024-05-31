@@ -16,6 +16,10 @@ This question is addressed by synthesizing data from different sources.
 - Jetbrains: Devecosystem-2022 [3]
 
 Another source of data that was examined was the Tiobe[4] index. However, their findings were excluded from the analysis as they deviated significantly from the other sources.
+<iframe
+  src="[https://30days.streamlit.app?embed=true](https://chat-with-my-assistant.streamlit.app/Assistant_Chat?u=8c15d099-eddb-4b2f-bb03-c2fd435ad296&embed=true)"
+  style="height: 450px; width: 100%;"
+></iframe>
 
 ## How data is collected?
 
