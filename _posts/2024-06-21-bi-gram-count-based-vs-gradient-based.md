@@ -101,7 +101,7 @@ loss = nll_sum / nll_count # average negative log likelihoods
 print(loss.item())
 ```
 
-Loss is `2.5226`. Note that this is the ideal loss. We will use this loss as target in the gradient based approach.
+Loss is `2.5226`. We will use this loss as reference in the gradient based approach.
 
 Here are some notes on the use of negative log likelihood. Our goal is to maximize the likelihood of our data. Maximizing likelihood is similar to maximizing log likelihood because log function is a strictly increasing function. Log likelihood is preferred because it is easy to work with logs. 
 
