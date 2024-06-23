@@ -101,7 +101,7 @@ loss = nll_sum / nll_count # average negative log likelihoods
 print(loss.item())
 ```
 
-Loss is `2.5226`.
+Loss is `2.5226`. Note that this is the ideal loss. We will use this loss as target in the gradient based approach.
 
 Here are some notes on the use of negative log likelihood. Our goal is to maximize the likelihood of our data. Maximizing likelihood is similar to maximizing log likelihood because log function is a strictly increasing function. Log likelihood is preferred because it is easy to work with logs. 
 
@@ -115,7 +115,9 @@ Negative log likelihood as a loss function gives values close to zero when proba
 
 Gradient based model is a bit complex compared to the count based method. However they share similarities. Also it is important to note that gradient based method is much more powerful that can be applied to much more complicated problems.
 
-Note that neural networks can not be used for counting. But we can use them to learn the parameters of a model that is similar to counting. W tensor is similar to T tensor of the count method that keeps the counts. W tensor values can be taught as log counts. one hot vector and W multiplication extracts log counts for the given input character. This log count is converted to pseudo-counts by using exponationation function. Pseudo-counts are then converted to probabilities by using normalization in the exact same manner with the count based method. Also note that exponati nation function and normalization together corresponds to the softmax function.
+Note that neural networks can not be used for counting. But we can use them to learn the parameters of a model that is similar to counting. W tensor is similar to T tensor of the count method that keeps the counts. W tensor values can be taught as log counts. one hot vector and W multiplication extracts log counts for the given input character. This log count is converted to pseudo-counts by using exponationation function. Pseudo-counts are then converted to probabilities by using normalization in the exact same manner with the count based method. Also note that exponentiation function and normalization together corresponds to the softmax function.
+
+Use of one hot vectors is for indexing into the W vector. One hot vector has only one value set to 1 and all other values are set to 0. If we multiply a one hot vector with a tensor, the result will be the row of the tensor at that index, all other rows will be discarded. This is analogous to the count based method where we use an index into the T tensor.
 
 Negative log likelihood is calculated in the same way. 
 
