@@ -117,8 +117,6 @@ Gradient based model is a bit complex compared to the count based method. Howeve
 
 Note that neural networks can not be used for counting. But we can use them to learn the parameters of a model that is similar to counting. W tensor is similar to T tensor of the count method that keeps the counts. W tensor values can be taught as log counts. one hot vector and W multiplication extracts log counts for the given input character. This log count is converted to pseudo-counts by using exponationation function. Pseudo-counts are then converted to probabilities by using normalization in the exact same manner with the count based method. Also note that exponentiation function and normalization together corresponds to the softmax function.
 
-Use of one hot vectors is for indexing into the W vector. One hot vector has only one value set to 1 and all other values are set to 0. If we multiply a one hot vector with a tensor, the result will be the row of the tensor at that index, all other rows will be discarded. This is analogous to the count based method where we use an index into the T tensor.
-
 Negative log likelihood is calculated in the same way. 
 
 ```python
@@ -129,8 +127,7 @@ W = torch.rand((30,30), requires_grad=True)
 for i in range(500):
 
     # forward
-    xenc = F.one_hot(xs, num_classes=30).float()
-    logits = xenc @ W  # log counts
+    logits = self.W[ixs] # log counts
     # softmax
     counts = logits.exp()
     probs = counts / counts.sum(1, keepdim=True)
@@ -268,4 +265,7 @@ Bi-gram models generations are not perfect but they are a good starting point fo
 ## References
 
 1- [Make More](https://www.youtube.com/watch?v=PaCmpygFfXo)
+
 2- [TDKDictionaryCrawler](https://github.com/ncarkaci/TDKDictionaryCrawler)
+
+3- [Code Notebook](https://github.com/habanoz/lm_model_notebooks/blob/main/1_count-vs-nn-clss.ipynb)
