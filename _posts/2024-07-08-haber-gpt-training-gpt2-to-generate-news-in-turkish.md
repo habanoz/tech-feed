@@ -117,4 +117,4 @@ Short comings should be resolved by introducing more compute e.g. parameters and
 
 4- [eco-news-tr dataset](https://huggingface.co/datasets/habanoz/eco-news-tr)
 
-5- [Training Code(This repository)](https://github.com/habanoz/haber-gpt)
+5- [Training Code](https://github.com/habanoz/haber-gpt)
