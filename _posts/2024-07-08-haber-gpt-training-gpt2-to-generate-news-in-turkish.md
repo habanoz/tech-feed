@@ -5,10 +5,14 @@ categories:
   - workshop
 
 tags:
-  - bi-gram models
+  - self-attention
+  - transformer
+  - gpt2
   - language models
   - gradient descent
   - pytorch
+  - turkish language model
+  - tiny stories
 ---
 
 HaberGPT is a simple framework influenced greatly by the works of Andrej Karpathy, namely mingpt and nanogpt.
