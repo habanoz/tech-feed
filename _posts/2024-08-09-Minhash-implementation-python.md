@@ -16,9 +16,13 @@ tags:
 MinHash algorithm is used to identify near-duplicate document in training corpus. 
 
 The algorithm is simple:
+
 1 - Partition a document into pieces. For each pieces generate H hashes. Choose minimum of the each H hashes across the pieces. Final signature is composed of H hashes.
+
 2 - Compute a signature for all documents in the corpus.
+
 3 - For each document pairs compute a similarity score using Jaccard Similarity based on the signatures. 
+
 
 As part of my training corpus generation studies, I decided to implement a simple min-hash script. 
 
@@ -121,8 +125,11 @@ This is the best we can hope for and works well in practice.
 Assume you now t, threshold value for similarity. Documents with scores larger than t will be removed. 
 
 1- Find the right M. Start by using no M which is unlimited pair cache, and lower M until your dataset fits to the memory. 
+
 2- Run minhash algorithm with the M hyperparameter. 
+
 3- Remove all duplicates documents having score larger than t. 
+
 4- If t is not found in scores in the pair list, then there might be more duplicate items in the remaining documents. Go to step 2.
 
 ## Details to consider
@@ -161,4 +168,5 @@ And my final implementation took 1 hour to complete with 12 iterations per secon
 ## References
 
 1- [Kaggle Notebook](https://www.kaggle.com/code/abhishekmungoli/minhashing)
+
 2- [Pyminhash](https://github.com/fritshermans/pyminhash)
