@@ -183,8 +183,15 @@ My very first experiment with applying minhash resulted in an unexpectedly slow 
 
 In contrast, my final optimized implementation finished in just below 1 hour and achieved a significantly faster initial speed of around 12 iterations per second, representing a roughly 10-fold improvement.
 
+
+# Conclusion
+
+The source code can be accessed from my GitHub repository[3].
+
 ## References
 
 1- [Kaggle Notebook](https://www.kaggle.com/code/abhishekmungoli/minhashing)
 
 2- [Pyminhash](https://github.com/fritshermans/pyminhash)
+
+3- [Code Repository](https://github.com/habanoz/scalable-minhash)
