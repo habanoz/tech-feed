@@ -13,18 +13,19 @@ tags:
   - space complexity
 ---
 
-MinHash algorithm is used to identify near-duplicate document in training corpus. 
+MinHash algorithm is used to identify near-duplicate documents in a training corpus. 
 
 The algorithm is simple:
 
-1 - Partition a document into pieces. For each pieces generate H hashes. Choose minimum of the each H hashes across the pieces. Final signature is composed of H hashes.
+1 - Partition a document into pieces. For each piece generate H hashes. Choose minimum of the each H hashes across the pieces. Final signature is composed of H hashes.
 
 2 - Compute a signature for all documents in the corpus.
 
 3 - For each document pairs compute a similarity score using Jaccard Similarity based on the signatures. 
 
 
-As part of my training corpus generation studies, I decided to implement a simple min-hash script. 
+As part of my training corpus generation studies, I tried to use minhash to de-duplicate documents and I ended up with implementing a scalable min-hash implementation . 
+
 
 ## Available Implementations
 
@@ -43,7 +44,8 @@ I know there are numerous other options out there that can be tried, but my expe
 
 Minhash is a simple algorithm. But it is not very simple to scale up. 
 
-3rd step in the algorithm involves pairing each documents which means N^2 time and space complexity (N being number of documents). 3rd step also involves a lot of (N^2) Jaccard similarity computations which requires an efficient Jaccard similarity computation method.
+3rd step in the algorithm involves pairing each documents which means N^2 time and space complexity (N being number of documents). 3rd step also involves a lot of (N^2) Jaccard similarity computations. It is essential to use an efficient Jaccard similarity computation method.
+
 
 ## Efficient Jaccard Similarity Computation
 
@@ -51,7 +53,7 @@ Numpy is great for vectorized calculations. I utilized numpy and left optimizati
 
 `signatures` is a numpy array of `NxH` where **N** is the number of documents and **H** is the number of hashes. 
 
-For each document, take difference between the remaining documents in the array. Each zero means hash match. Count the number of zeros at each row and divide by H to compute the scores.
+For each document signature, take difference between the remaining document signatures in the array. Each zero means a hash match. Count the number of zeros at each row and divide by H to compute the scores.
 
 Note that each step is carried on numpy arrays.
 
@@ -64,16 +66,18 @@ for i in tqdm.tqdm(range(N)):
 
 ## Controlling Memory Consumption
 
-`N^N` is an undesirable time and space complexity. While there is no obvious cure to combatting time complexity, except for using efficient computations inside to ease up the burden, there is a way to control memory consumption.
+`N^2` is an undesirable time and space complexity. While there is no obvious cure to combatting time complexity, there is a way to control memory consumption.
 
 The intuition is that we do not need to store scores for each pairs in the pair cache. We only need scores for the top M pairs. After computing jaccard similarity, we can compare it to minimum jaccard score we have at the time and throw it if it is smaller than the minimum score.
-If it is larger than the current minimum we can store it in pair cache and remove the previous minimum from the pair cache. This way we can achieve a pair cache with a maximum size of M.
+If it is larger than the current minimum, we can store it in pair cache and remove the previous minimum from the pair cache. This way we can achieve a pair cache with a maximum size of M.
 
 There are two obvious caveats with this approach and both of them can be mitigated:
 
-- Determining hyperparameter M (pair cache size): It is difficult to determine the hyperparameter M. But we can run the algorithm multiple times with M as large as the system memory allows. After each iteration most similar items can be removed. Since many documents are removed, following iteration will be much faster(N^2 time complexity). When the desired score threshold is found in the pair cache, the procedure can be stopped. Let's say score 0.6 is the threshold for similarity, the procedure can be stopped when 0.6 is encountered in the pair cache.
+- **Determining hyperparameter M (pair cache size)**: It is difficult to determine the hyperparameter M. But we can run the algorithm multiple times with M as large as the system memory allows. After each iteration most similar documents can be removed. Since many documents are removed, the following iteration will be much faster. 
 
-- Keeping track of minimums in the pair cache: We need to know current minimum in the pair cache so that we can use to determine whether we should throw a new pair. The naive approach is to sort the pair cache after each insertion. Efficient sorting algorithms can sort a list on `O(mlogm)` times. Since the list is sorted beforehand, adding a new element and sorting would have `O(m)` time complexity. This is not too bad but there is a better option.
+When the desired score threshold is found in the pair cache, the procedure can be stopped. Let's assume 0.6 is the threshold for similarity, the procedure can be stopped when 0.6 is encountered in the pair cache.
+
+- **Keeping track of minimums in the pair cache**: We need to know current minimum in the pair cache so that we can use to determine whether we should throw a new pair. The naive approach is to sort the pair cache after each insertion. Efficient sorting algorithms can sort a list in `O(mlogm)` times. Since the list is sorted beforehand, adding a new element and sorting would have `O(m)` time complexity. This is not too bad but there is a better option.
 
 
 ## A Perfect Use-case of a Min-Heap
@@ -103,7 +107,7 @@ This slightly modified version uses the same python list **h**. List is filled u
 
 Here `heapify` and `heappushpop` are standard library functions provided by python. While it is easy to implement them, in fact there is no need practical benefit of doing so.
 
-From this point on, if a pair is needed to be stored it is pushed to the list and minimum item is removed from the heap in a single operation that has a `O(LogM)` complexity. 
+From this point on, if a pair is needed to be stored, it is pushed to the list and minimum item is removed from the heap in a single operation that has a `O(LogM)` complexity. 
 
 This is the best we can hope for and works well in practice.
 
@@ -120,17 +124,23 @@ This is the best we can hope for and works well in practice.
 
 ```
 
+![sort-vs-heap]({{site.baseurl}}/assets/images/sort_vs_heap.png)
+
+Here is how execution time varies as pair cache size is increased. Heap based approaches scales much better, in fact appears to be constant.
+
+
 ## Recipe for Duplicate Removal
 
-Assume you now t, threshold value for similarity. Documents with scores larger than t will be removed. 
+Assume you know t, threshold value for similarity. Documents with similarity scores larger than t will be removed. 
 
-1- Find the right M. Start by using no M which is unlimited pair cache, and lower M until your dataset fits to the memory. 
+1- Find the right M. Start by using M set to None which means unlimited pair cache, and lower M gradually until your pair cache fits to the memory. 
 
 2- Run minhash algorithm with the M hyperparameter. 
 
-3- Remove all duplicates documents having score larger than t. 
+3- Remove all duplicates documents having a score larger than t. 
 
-4- If t is not found in scores in the pair list, then there might be more duplicate items in the remaining documents. Go to step 2.
+4- If t is not found in the pair cache, then there might be more duplicate documents in the corpus. Go to step 2.
+
 
 ## Details to consider
 
@@ -146,13 +156,16 @@ For the document 1 there will be N-2 score computations.
 For the document N-2 there will be 1 score computations.
 For the document N-1 there will be 0 score computations.
 
-So as the algorithm progresses, each iteration will be faster than the previous iteration. This has no implication on total execution time. Tqdm is used to visualize the process. Initial estimation of the tqdm will be much different than the total time actually it will take. 
+So as the algorithm progresses, each iteration will be faster than the previous iteration. This has no implication on total execution time. 
+
+Tqdm is used to visualize the progress. Initial estimation of the tqdm will be much different than the total time actually it will take. 
+
 
 ### Impact of size of M
 
-If M is none, there will be no bound on the pair cache memory so there will be no interim sorting (heap operations) operations. 
+If M is None, there will be no bound on the pair cache so there will be no interim sorting (heap operations) operations. 
 
-If M is not None, larger M size, will cause costlier heap operations. Also note that first M items are pushed to the heap without any extra operations.
+If M is not None, the larger the M, the costlier heap operations will be. Also note that first M items are pushed to the heap without any extra operations.
 
 Very small M may require a second or third iterations of the overall minhash computation procedure. 
 
@@ -161,9 +174,9 @@ M is the main hyperparameter to strike a good balance between memory consumption
 
 ## Results
 
-At my very first experiment with minhash, expected running time for 80K documents was 15 hours with a 1.42 iterations per second initial speed(tqdm measurements). I canceled the run because it was beyond my expectation so I never know actually how long did it take.
+My very first experiment with applying minhash resulted in an unexpectedly slow performance, taking around 15 hours to process 80K documents with an initial speed of approximately 1.42 iterations per second. I terminated the experiment before it was completed, so I'm unsure what the actual total time would have been.
 
-And my final implementation took 1 hour to complete with 12 iterations per seconds initial speed. 
+In contrast, my final optimized implementation finished in just below 1 hour and achieved a significantly faster initial speed of around 12 iterations per second, representing a roughly 10-fold improvement.
 
 ## References
 
