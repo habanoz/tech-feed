@@ -126,7 +126,7 @@ This is the best we can hope for and works well in practice.
 
 ![sort-vs-heap]({{site.baseurl}}/assets/images/sort_vs_heap.png)
 
-Here is how execution time varies as pair cache size is increased. Heap based approaches scales much better, in fact appears to be constant.
+Here is how execution time varies as pair cache size is increased. Heap based approach scales much better, in fact appears to be constant.
 
 
 ## Recipe for Duplicate Removal
