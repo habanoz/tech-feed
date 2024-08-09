@@ -149,12 +149,17 @@ Assume you know t, threshold value for similarity. Documents with similarity sco
 The pair generation loop iterates over documents and at each iteration calculates scores with the selected document and remaining documents. Since score of doc_a and doc_b is similar to doc_b and doc_a (symmetric property) there is no need to calculate score again for doc_b and doc_a. 
 
 For the document 0 there will be N-1 score computations.
+
 For the document 1 there will be N-2 score computations.
+
 .
 .
 .
+
 For the document N-2 there will be 1 score computations.
+
 For the document N-1 there will be 0 score computations.
+
 
 So as the algorithm progresses, each iteration will be faster than the previous iteration. This has no implication on total execution time. 
 
