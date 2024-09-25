@@ -12,7 +12,7 @@ tags:
 
 2 Months ago, I trained a tiny language model with 10M parameters on turkish news datasets [1]. However, 10M parameters turned out to be not enough to generate good news articles. Following the Tiny Stories[2] paper, I decided to train a larger network, a network with 30M parameters. A larger network needs more training data. In this article I will explain how I collected 1.8M news documents from Common Crawl.
 
-Whole code of the pipeline is available under the name of cc-spider[18].
+Code[18] and Dataset[21] is available.
 
 ## How to obtain data from common crawl 
 
@@ -92,7 +92,8 @@ I was expecting to see more documents dropped at stage cross-domain deduplicatio
 
 1.8M documents can be used to train a small GPT-2 model. e.g. 30M parameters. Since the pipeline is ready, it is possible to collect more documents and train larger models. The beauty of this pipeline is that it runs with a low resource footprint. I run all the steps in my notebook with 8 (4 virtual) cores and 32GB RAM. But datatrove library, our pipeline is based on, can run on multiple machines, which makes the whole process really scalable. 
 
-Whole code of the pipeline is open source and available at [18].
+Whole code of the pipeline is open source and available at [18] with name `cc-spider`.
+Whole dataset is available at [21] with name `news-tr-1.8M`.
 
 Finally I can start training HaberGPT-2 model using my training script[19].
 
@@ -137,3 +138,5 @@ Finally I can start training HaberGPT-2 model using my training script[19].
 19- [Notebook GPU Trainer](https://github.com/habanoz/nb_gpu_trainer)
 
 20- [Trafilatura](https://trafilatura.readthedocs.io/en/latest/)
+
+21- [news-tr-1.8M Dataset](habanoz/news-tr-1.8M)
