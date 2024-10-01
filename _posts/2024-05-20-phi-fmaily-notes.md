@@ -29,7 +29,33 @@ tags:
 ### Additional Findings:
 
 - Width is more important for capturing factual knowledge whereas depth is more important for contextual tracking
+-- Shallower models perform better in terms of grammar compared to content consistency, meaning that model depth is more important for keeping consistent with the content than for generating syntactically correct language
+-- Score for grammar plateaus at an earlier stage than the other two scores.
+-- while grammar can be mastered by relatively small models, consistency and creativity only emerge at a larger size.
+-- TinyStories (with roughly 80M parameters) reaches almost perfect scores in terms of grammar and consistency. However, it falls short of GPT-4’s abilities in terms of creativity quite significantly, suggesting that creativity continues to improve more substantially with the sizes of the model and dataset, compared to grammar and consistency.
+-- Ability to generate a completion that is consistent with the beginning of the story emerges when the hidden size of the model increases from 64 to 128.
+-- Models that have only 1 layer seem to struggle quite substantially with following instructions (which likely heavily relies on global attention)
+-- 2 layers seem to be sufficient for a certain extent of instruction-following.
+-- The quality of instruction-following depends more heavily on the number of layers, in comparison with the coherence of the plot for which the hidden dimension is more important.
+-- The results show that as the embedding dimension and the number of layers increase, the performance in regards to all three categories improve. The models with higher embedding dimensions and more layers tend to generate more accurate, relevant, and natural continuations, while the models with lower embedding dimensions and fewer layers tend to generate more nonsensical, contradictory, or irrelevant continuations
+-- One interesting finding is that knowledge of facts seems to rely more on the embedding dimension, whereas for context-tracking the number of layers is more important. The embedding dimension is more crucial for capturing the meaning and the relations of words, while the number of layers is more crucial for capturing long-range dependencies in the generation.
+
+![tiny-stories-figure-4]({{site.baseurl}}/assets/images/tiny-stories-figure-4.png)
+
+- Models with a small number of layers have a hard time staying in context, even if they do manage to produce syntactically correct English. This suggests that the model lacks the ability to capture the long-term dependencies and the structure of the story. On the other hand, models with more layers can better maintain the consistency and the logic of the story.
 - In terms of emergence, grammatical and syntactic abilities appear earlier than the ability to produce consistent text, which in turn appears ahead of ability to generate content that would be considered as creative.
+
+#### Interpretability
+
+##### Attention Heads
+
+Our findings suggest that the attention heads exhibit diverse and meaningful functions, such as attending to the previous word, the subject of the sentence, the end of the sentence, or the main topic of the story. 
+We also observe that some attention heads specialize in generating certain types of words, such as nouns, verbs, or punctuation. These results suggest that the attention heads learn to perform different linguistic tasks and capture different aspects of the stories.
+
+##### MLP
+
+We use the method similar to [18] to identify the most influential tokens in the MLP for each neuron. We find that some neurons are activated on words that have a specific role in the sentence (such as the subject or the action), or in the story (such as the introduction of the protagonist). 
+These findings suggest that the neurons in the MLP learn to encode different semantic and stylistic information and influence the generation process.
 
 ### Future Direction:
 
