@@ -34,7 +34,7 @@ $$ N \propto C^{0.73} $$
 
 $$ D \propto C^{0.27} $$
 
-These scaling laws claim that if number of parameters is increased, it is necessary to increase dataset size. Increase in dataset size is less significant.
+These formulations indicate that it is necessary to increase model size and training set size together. However, increase in dataset size is less significant.
 
 
 ## Chinchilla scaling laws
@@ -43,7 +43,7 @@ Later in [2] those findings are invalidated. Chinchilla scaling laws assumes sim
 
 ![Hoffmann-Scaling laws-Table 2]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-table-2.png)
 
-[2] models training loss as a function of dataset size and model size.
+In [2], training loss is modelled as a function of dataset size and model size.
 
 ![Hoffmann-Scaling laws-Equation 2]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-equation-2.png)
 
@@ -67,7 +67,7 @@ But according to Table 3 of [2], model size should have been 67B, dataset size s
 ![Llama3-Scaling laws- Figure 2-3]({{site.baseurl}}/assets/images/llama3-scaling-laws-fig-2-3.png)
 
 
-In [3], llama paper introduces its own scaling laws with similar assumptions. The power relationship between compute and dataset size is given in:
+In [3], llama-3 paper introduces its own scaling laws with similar assumptions. The power relationship between compute and dataset size is given in:
 
 $$ N^{*}(C) = AC^{\alpha} $$
 
