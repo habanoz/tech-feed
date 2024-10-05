@@ -11,9 +11,9 @@ tags:
 mathjax: true
 ---
 
-Training language models is an expensive business and it is important to plan carefully ahead of training. This post will discuss the scaling laws of LLMs and how to plan ahead for training.
+Training language models is an expensive business and it is important to plan carefully ahead of training. This post will briefly touch studies on scaling laws.
 
-Scaling laws tries to answer the question: Given a compute budget what is the optimal amount of tokens to train a model? 
+Scaling laws tries to answer the following question: Given a compute budget what is the optimal amount of tokens to train a model? 
 
 ## Kaplan scaling laws
 
