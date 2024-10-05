@@ -41,30 +41,30 @@ These scaling laws claim that if number of parameters is increased, it is necess
 
 Later in [2] those findings are invalidated. Chinchilla scaling laws assumes similar power-law relationships but claims that dataset size should be increased at the same rate with the model size. (See Table 2 of [2]).
 
-![Hoffmann-Scaling laws-Table 2](hoffmann-scaling-laws-table-2.png)
+![Hoffmann-Scaling laws-Table 2]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-table-2.png)
 
 [2] models training loss as a function of dataset size and model size.
 
-![Hoffmann-Scaling laws-Equation 2](hoffmann-scaling-laws-equation-2.png)
+![Hoffmann-Scaling laws-Equation 2]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-equation-2.png)
 
 Estimations for the unknown values are given in appendix D.2 of [2].
 
-![Hoffmann-Scaling laws-Equation 10](hoffmann-scaling-laws-equation-10.png)
+![Hoffmann-Scaling laws-Equation 10]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-equation-10.png)
 
 Using the values it is possible to formulate optimal number of tokens and parameters as in equation 4 of [2].
 
-![Hoffmann-Scaling laws-Equation 4](hoffmann-scaling-laws-equation-4.png)
+![Hoffmann-Scaling laws-Equation 4]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-equation-4.png)
 
 However, using the estimated parameter values from appendix D.2 of [2], I was unable to recrate results in Table 3 of [2].
 
-![Hoffmann-Scaling laws-Equation 4 - Example 1](hoffmann-scaling-laws-equation-4-ex-1.png)
+![Hoffmann-Scaling laws-Equation 4 - Example 1]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-equation-4-ex-1.png)
 
 But according to Table 3 of [2], model size should have been 67B, dataset size should have been 1.5T. This mismatch is probably due to lack of precision in the given parameter values. In this form these numbers are useless. 
 
 
 ## Llama 3 Scaling Laws
 
-![Llama3-Scaling laws- Figure 2-3](llama3-scaling-laws-fig-2-3.png)
+![Llama3-Scaling laws- Figure 2-3]({{site.baseurl}}/assets/images/llama3-scaling-laws-fig-2-3.png)
 
 
 In [3], llama paper introduces its own scaling laws with similar assumptions. The power relationship between compute and dataset size is given in:
@@ -91,7 +91,7 @@ $$ \alpha = 0.5372651710628614 $$
 
 With this value, it is possible to match values in the paper:
 
-![Llama-Scaling Laws-Correction](llama3-scaling-laws-correction-1.png)
+![Llama-Scaling Laws-Correction]({{site.baseurl}}/assets/images/llama3-scaling-laws-correction-1.png)
 
 
 ## References
