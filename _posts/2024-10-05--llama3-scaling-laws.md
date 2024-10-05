@@ -64,6 +64,9 @@ But according to Table 3 of [2], model size should have been 67B, dataset size s
 
 ## Llama 3 Scaling Laws
 
+![Llama3-Scaling laws- Figure 2-3](llama3-scaling-laws-fig-2-3.png)
+
+
 In [3], llama paper introduces its own scaling laws with similar assumptions. The power relationship between compute and dataset size is given in:
 
 $$ N^{*}(C) = AC^{\alpha} $$
