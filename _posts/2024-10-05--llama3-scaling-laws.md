@@ -99,11 +99,11 @@ which can be easily found by using their compute budget, and projected parameter
 
 $$ N^{*}(C) = AC^{\alpha} $$
 
-$$ 16.55x10^{12} = 0.299x(3.8x10^{25})^{\alpha} $$
+$$ 16.55*10^{12} = 0.299*(3.8*10^{25})^{\alpha} $$
 
-$$ 16.55x10^{12} / 0.299 = (3.8x10^{25})^{\alpha} $$
+$$ 16.55*10^{12} / 0.299 = (3.8*10^{25})^{\alpha} $$
 
-$$ log(16.55x10^{12} / 0.299) = \alpha x log(3.8x10^{25}) $$
+$$ log(16.55*10^{12} / 0.299) = \alpha x log(3.8*10^{25}) $$
 
 $$ \alpha = 0.5372651710628614 $$
 
