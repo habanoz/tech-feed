@@ -13,6 +13,8 @@ mathjax: true
 
 Training language models is an expensive business and it is important to plan carefully ahead of training. This post will briefly touch studies on scaling laws.
 
+For a given amount of training flops, there is a trade-off between model size and size of dataset. The optimal size for a given amount of compute, is proportional to compute raised to some power α > 1 (The same holds true between FLOPs and dataset size). Different studies have found different α values but there is a wide consensus on the power-law relationship. 
+
 Scaling laws tries to answer the following question: Given a compute budget what is the optimal amount of tokens to train a model? 
 
 ## Kaplan scaling laws
@@ -111,6 +113,11 @@ With this value, it is possible to match values in the paper:
 
 ![Llama-Scaling Laws-Correction]({{site.baseurl}}/assets/images/llama3-scaling-laws-correction-1.png)
 
+## Conclusion
+
+Scaling laws is a great tool to plan ahead of pre-training. Scaling laws provides a loose estimate of optimal dataset size or model size. While scaling laws are important and widely respected, the are counter examples. 
+
+Llama 3 models [3], other than the flagship model, continued training and hugely exceeded optimal dataset size. The idea is that training beyond the optimal dataset size produces diminishing returns at model quality, it is well worth to have an inference optimal model, especially when inference costs are expected to exceed training costs.
 
 ## References
 
