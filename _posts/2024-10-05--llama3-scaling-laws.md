@@ -39,7 +39,7 @@ These formulations indicate that it is necessary to increase model size and trai
 
 ## Chinchilla scaling laws
 
-Later in [2] those findings are invalidated. Chinchilla scaling laws assumes similar power-law relationships but claims that dataset size should be increased at the same rate with the model size. (See Table 2 of [2]).
+Later in [2] those findings are invalidated. Chinchilla scaling laws assumes similar power-law relationships but claims that dataset size should be increased at the same rate with the model size. They followed 3 different approaches and introduced 3 different scaling relationships. (See Table 2 of [2]).
 
 ![Hoffmann-Scaling laws-Table 2]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-table-2.png)
 
@@ -59,8 +59,26 @@ However, using the estimated parameter values from appendix D.2 of [2], I was un
 
 ![Hoffmann-Scaling laws-Equation 4 - Example 1]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-equation-4-ex-1.png)
 
-But according to Table 3 of [2], model size should have been 67B, dataset size should have been 1.5T. This mismatch is probably due to lack of precision in the given parameter values. In this form these numbers are useless. 
+Using the equation 10 with predicted values, I found for a given budget of 5.7e+23 FLOPs, a model with 38B parameters should be trained on 2.2T tokens. But according to Table 3 of [2], model size should have been 67B, dataset size should have been 1.5T. This mismatch is probably due to lack of precision in the given parameter values. In this form these numbers are useless.
 
+### Fitting a Linear Line
+
+In [2], Figure A3 shows a linear plot of model training params belonging to all three approaches. Data used for line fitting can be found in Table 3 and Table A3. 
+In Figure A3, it is visible that 3 approaches lead to 3 different lines. Approach 1 and approach 2 resulted in a slightly similar line, while approach 3 produced a significantly different line. 
+The fact that approach 1 and approach 2 outcomes agree to some extent, they can be used to make projections about determining the number of tokens given a model size. It would not be a reliable estimate but can provide a good start. 
+
+The good part of this approach is it is possible to estimate number of tokens to training given parameter count. 
+
+![Hoffmann-Scaling laws-Figure A3]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-figure-a3.png)
+
+Figure 1 of the [2] is also interesting. It also includes Kaplan et. al line. Models trained until Chinchilla followed the Kaplan et. al scaling laws, and they seem to be undertrained. Training of Chinchilla validates Hoffmann scaling law and verifies that previous models were actually undertrained. This plot effectively summarizes importance of scaling laws. 
+
+![Hoffmann-Scaling laws-Figure A3]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-figure-1.png)
+
+Andrew Karpathy published a brilliant notebook[4] that uses Table A3, Approach 2 data to fit a line and make projections. 
+Following code from [4] shows the trend line.
+
+![Karpathy-Plot-Approach-2]({{site.baseurl}}/assets/images/karpath-approach-2-plot.png)
 
 ## Llama 3 Scaling Laws
 
@@ -101,3 +119,5 @@ With this value, it is possible to match values in the paper:
 2- [Training Compute-Optimal Large Language Models](https://arxiv.org/pdf/2203.15556)
 
 3- [The Llama 3 Herd of Models](https://arxiv.org/pdf/2407.21783)
+
+4- [Scaling Laws Notebook by Karpathy](https://github.com/karpathy/nanoGPT/blob/master/scaling_laws.ipynb)
