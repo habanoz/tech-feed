@@ -77,7 +77,7 @@ Figure 1 of the [2] is also interesting. It also includes Kaplan et. al line. Mo
 
 ![Hoffmann-Scaling laws-Figure A3]({{site.baseurl}}/assets/images/hoffmann-scaling-laws-figure-1.png)
 
-Andrew Karpathy published a brilliant notebook[4] that uses Table A3, Approach 2 data to fit a line and make projections. 
+Andrej Karpathy published a brilliant notebook[4] that uses Table A3, Approach 2 data to fit a line and make projections. 
 Following code from [4] shows the trend line.
 
 ![Karpathy-Plot-Approach-2]({{site.baseurl}}/assets/images/karpath-approach-2-plot.png)
