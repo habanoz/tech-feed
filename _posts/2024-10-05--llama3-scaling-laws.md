@@ -115,9 +115,9 @@ With this value, it is possible to match values in the paper:
 
 ## Conclusion
 
-Scaling laws is a great tool to plan ahead of pre-training. Scaling laws provides a loose estimate of optimal dataset size or model size. While scaling laws are important and widely respected, the are counter examples. 
+Scaling laws is a great tool to plan ahead of pre-training. Scaling laws provides a loose estimate of optimal dataset size or model size. While scaling laws are important and widely respected, there are counter examples. 
 
-Llama 3 models [3], other than the flagship model, continued training and hugely exceeded optimal dataset size. The idea is that training beyond the optimal dataset size produces diminishing returns at model quality, it is well worth to have an inference optimal model, especially when inference costs are expected to exceed training costs.
+Llama 3 models [3], other than the flagship model, continued training and hugely exceeded optimal dataset size. The idea is that while training beyond the optimal dataset size produces diminishing returns at model quality, it is well worth to have an inference optimal model, especially when inference costs are expected to exceed training costs.
 
 ## References
 
