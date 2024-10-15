@@ -201,7 +201,7 @@ Now print the graph of the `y` tensor.
 bsf_print(y, named_parameters=w.named_parameters())
 ```
 
-AccumulatedGrad nodes represents the weight tensors. Note that weights are in full precision. `mat1` tensor saved by `AddmmBackward0` function is down-scaled version of `weight` tensor of the linear layer. Note that `mat1` tensor is in half precision.
+AccumulatedGrad nodes represents the weight tensors. Note that weights are in full precision. `mat1` tensor saved by `AddmmBackward0` function is half precision version of `weight` tensor of the linear layer. The same tensor is kept in full and half precision. Total memory consumption is higher than using only full precision.  
 
 ```text
 Computation graph nodes:
