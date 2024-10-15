@@ -100,7 +100,118 @@ During forward pass, pytorch creates a computation graph to allow execution of b
 
 This computation graph is core to the Pytorch's backpropagation implementation. Loss value is the root of the graph, network weights are leaves of the graph. Intermediate nodes correspond to backward pass functions that calculates output gradients. 
 
+Here is the corresponding computation graph for a linear transformation defined above. Green node represent the root (output tensor), blue nodes represent leaf nodes (weight tensors), orange nodes shows tensors saved for backward pass and gray nodes represents backward pass functions.
+
+Note that `x` is not part of the graph since it does not require gradients.
+
 ![Linear Layer - Computation Graph]({{site.baseurl}}/assets/images/torch-activation-memory-linear.png)
+
+In the graph, you can see that multiplication operation saves `w` tensor for backward pass. Conversely, `x` is NOT saved, because it is not part of the graph. Also note that, Add operation does not save any tensors, because its derivative is 1 and does not depend on inputs.
+
+You should also notice the AccumulateGrad nodes. These nodes are connected to the leaf nodes and used for accumulating gradients during backward pass.
+
+In pytorch, there is a special layer for multiplication followed by an addition: `nn.Linear`. We can plugin `nn.Linear` layer to achieve them same output with less code.
+
+![NN Linear Layer - Computation Graph]({{site.baseurl}}/assets/images/torch-activation-memory-nn-linear.png)
+
+Note that instead of two functions, `nn.Linear` introduces single function: AddmmBakward0. Similarly, AddmmBakward0 caches only the weight tensor (mat1). Dark green node indicates that the output tensor (light green tensor) is a view of the output of the Addmm operation. Rest of the graph looks similar.  
+
+
+## Automatic Mixed Precision Training (AMP)
+
+Another interesting aspect to see at computation graph would be see how Automatic Mixed Precision Training (AMP) looks. 
+
+Neural network weights are stored as 4 byte floats. Float32 is called full precision. Modern GPUs performs matrix multiplication much faster at half precision, float16. However, float16 is not enough for some operations. Using solely float16 significantly degrades training performance. AMP is strikes a balance between full precision and half precision. In AMP, some operations use full precision while others use half precision.
+
+Here is how the computation graph in mixed mode looks like. Note `ToCopyBackward0` functions. They indicate that tensors are down scaled to half-precision.
+
+![NN Linear Layer - Computation Graph - MP]({{site.baseurl}}/assets/images/torch-activation-memory-nn-linear-mp.png)
+
+Unfortunately, torchviz does not display precision information. But we can obtain this information by traversing the computation graph. Here is a BFS code to traverse the graph and print function and tensor data.
+
+```python
+from collections import deque
+import torch
+
+def is_tensor(t):
+    return isinstance(t, torch.Tensor)
+
+def shape(t:torch.Tensor):
+    return list(t.size())
+
+def bsf_print(y, named_parameters=None, print_saved_tensors=True):
+    
+    named_parameter_pairs = list(named_parameters)
+    accounted_address= set()
+    parameter_index = dict()
+
+    if named_parameters:
+        parameter_index = {tensor:name for name, tensor in named_parameter_pairs}
+        accounted_address = { t.untyped_storage().data_ptr() for n,t in named_parameter_pairs}
+
+    queue = deque([y.grad_fn])
+    visited = set()
+    
+    print("")
+    print("Computation graph nodes:")
+
+    while queue:
+        node = queue.popleft()
+        if node in visited:
+            continue
+
+        visited.add(node)
+
+        if "AccumulateGrad" in node.name():
+            tensor_var = node.variable
+            assert is_tensor(tensor_var)
+            assert tensor_var.requires_grad
+            
+            # do not add this to activation calculations
+            accounted_address.add(tensor_var.untyped_storage().data_ptr())
+
+            if tensor_var in parameter_index:
+                print(f"* AccumulateGrad - {parameter_index[tensor_var]} - {list(tensor_var.size())} - dtype: {str(tensor_var.dtype):8} - Addr: {tensor_var.untyped_storage().data_ptr():13}")
+            else:
+                print(f"* AccumulateGrad - 'Name not known' - {list(tensor_var.size())} - dtype: {str(tensor_var.dtype):8} - Addr: {tensor_var.untyped_storage().data_ptr():13}")
+        else:
+            print(f"- {node.name()}")
+        
+        saved_tensor_data = [(atr[7:], getattr(node, atr)) for atr in dir(node) if atr.startswith("_saved_")]
+        if saved_tensor_data and (print_saved_tensors):
+            tensor_data = [data for data in saved_tensor_data if is_tensor(data[1])]
+
+            # handle tensors
+            if tensor_data and print_saved_tensors:
+                for data in tensor_data:
+                    t = data[1]
+                    print(f"[{data[0]:>13}] - dtype: {str(t.dtype)[6:]:8} - Shape: {str(shape(t)):<18} - Addr: {t.untyped_storage().data_ptr():13} - NBytes: {t.untyped_storage().nbytes():>12,} - Size: {t.dtype.itemsize*t.size().numel():>12,}")
+        
+        # add children to the queue
+        queue.extend([next_fn_pair[0] for next_fn_pair in node.next_functions if next_fn_pair[0] is not None and next_fn_pair[0] not in visited])
+```
+
+Now print the graph of the `y` tensor.
+
+```python
+bsf_print(y, named_parameters=w.named_parameters())
+```
+
+AccumulatedGrad nodes represents the weight tensors. Note that weights are in full precision. `mat1` tensor saved by `AddmmBackward0` function is down-scaled version of `weight` tensor of the linear layer. Note that `mat1` tensor is in half precision.
+
+```text
+Computation graph nodes:
+- ViewBackward0
+- AddmmBackward0
+[         mat1] - dtype: float16  - Shape: [1, 1]             - Addr: 98196682887744 - NBytes:            2 - Size:            2
+- ToCopyBackward0
+- TBackward0
+* AccumulateGrad - bias - [1] - dtype: torch.float32 - Addr: 98196682467904
+- ToCopyBackward0
+* AccumulateGrad - weight - [1, 1] - dtype: torch.float32 - Addr: 98196682648256
+```
+
+If you uncomment `nn.LayerNorm` line and view the tensors, you will see that LayerNorm is sensitive to precision thus keeps its values in full precision.
 
 ## References
 
