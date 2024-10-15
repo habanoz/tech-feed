@@ -84,7 +84,7 @@ Input tensors, typically, are not modified. They are not adjusted to improve the
 
 An input to an operation can be one of weight, input or activation e.g. result from another operation. 
 
-What happens when a weight is used in an operation? What will happen if the weight tensor needs to be saved for backward pass? Will occupy more memory space? The answer is no! Pytorch will create a new torch but it will point to the same memory location of the original weight tensor, thus no additional memory will be used.
+What happens when a weight is used in an operation? What will happen if the weight tensor needs to be saved for backward pass? Will occupy more memory space? The answer is no! Pytorch will create a new tensor but it will point to the same memory location of the original weight tensor, thus no additional memory will be used.
 
 ### Torch CUDA Caching Allocator
 
@@ -213,6 +213,37 @@ Computation graph nodes:
 
 If you uncomment `nn.LayerNorm` line and view the tensors, you will see that LayerNorm is sensitive to precision thus keeps its values in full precision.
 
+
+## Activation Checkpointing (Gradient Checkpointing)
+
+Activation Checkpointing (AC) is a strategy that trade offs activation memory usage and training speed. In activation checkpointing, intermediate activations are not stored. Instead intermediate activations are calculated again. This approach saves some space but introduces extra calculations. 
+
+Let's revisit the linear layer example. This time input tensor is initialized to require gradients. Please note that intermediate typically activations requires gradients.
+
+![NN Linear Layer - Computation Graph - NO GC]({{site.baseurl}}/assets/images/torch-activation-memory-nn-linear-no-gc.png)
+
+
+Now let's enable gradient checkpointing.
+
+![NN Linear Layer - Computation Graph - GC]({{site.baseurl}}/assets/images/torch-activation-memory-nn-linear-gc.png)
+
+With AC, only the input tensor is cached. For larger networks savings will more prominent. Let's verify AC does not break the original code.
+
+![NN Linear Layer - Computation Graph - GC]({{site.baseurl}}/assets/images/torch-activation-memory-nn-linear-gc-verify.png)
+
+It is verified that outputs and gradients check out.
+
+## Conclusion
+
+I tried to provide useful insights about understanding activation memory. Pytorch is a sophisticated library that does a lot of things to make deep learning fun for the developers. I really appreciate it. I would like to refer the reader to [7], excellent work of Andrej Karpathy, to see how would deep learning would like without libraries like pytorch.  
+
+
+For the notebook including the demo code, see [4].
+
+For more detailed insight into transformer activation memory internals, see [5] 
+
+If you want to read more you may refer to [6] for a nice blog post about pytorch and activation memory.
+
 ## References
 
 1- [CS231n Winter 2016: Lecture 4: Backpropagation, Neural Networks 1](https://www.youtube.com/watch?v=i94OvYb6noo)
@@ -221,4 +252,10 @@ If you uncomment `nn.LayerNorm` line and view the tensors, you will see that Lay
 
 3- [A guide to PyTorch's CUDA Caching Allocator](https://zdevito.github.io/2022/08/04/cuda-caching-allocator.html)
 
-4- [Scaling Laws Notebook by Karpathy](https://github.com/karpathy/nanoGPT/blob/master/scaling_laws.ipynb)
+4- [torchviz_demo Notebook](https://colab.research.google.com/drive/1W_e3m-WeDvvmR1amiuxtX0KO_v0Csk9e?usp=sharing)
+
+5- [Gpt2 Activation Memory Insights](https://github.com/habanoz/gpt2_torch_activation_insights)
+
+6- [Activation Memory: A Deep Dive using PyTorch](https://www.determined.ai/blog/act-mem-2)
+
+7- [llm.c](https://github.com/karpathy/llm.c)
