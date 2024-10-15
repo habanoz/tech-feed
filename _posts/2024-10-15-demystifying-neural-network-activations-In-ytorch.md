@@ -72,19 +72,23 @@ Note the `grad_output` parameter. It is the gradient of the output generated in 
 
 $$\frac{\partial y}{\partial z}$$
 
-This is the expression that we needed to calculate partial derivatives above. Now lets repeat what we have learnt: In order to calculate partial derivatives of we need the gradient of the output and some variables. Output gradient is provided by pytorch. In multiplication case, variables are operands, namely x and W. For other operations, variables change. Which variables are necessary for gradient calculation depends on the operation. e.g. for derivative of sum operation no variable is needed because derivative of sum is just 1. 
+This is the expression that we needed to calculate partial derivatives above. Now lets repeat what we have learnt: In order to calculate partial derivatives, we need the gradient of the output and some variables. Output gradient is provided by pytorch. 
 
 Since we need input variables in backward pass to calculate partial derivatives, we need to save them in forward pass. This is the source of activation memory. 
+
+In multiplication case, variables are operands, namely x and W. For other operations, variables vary. Which variables are necessary for gradient calculation depends on the operation. e.g. for derivative of sum operation no variable is needed because derivative of sum is just 1. 
 
 ## Pytorch Tensors
 
 In pytorch everything is a tensor. From memory point of view, network weights, input or activations are all the same. They are tensors saved in the memory.
 
-Input tensors, typically, are not modified. They are not adjusted to improve the network output. Hence input tensors do not require gradients. But weights and all activations do require gradients. For activations, if one of the inputs to the operation requires gradient, then the resulting activation also requires gradients.
+Input tensors, typically, are not modified. They are not adjusted to improve the network output. Hence input tensors do not require gradients. Weights do require gradients. If a weight does not collect gradients it is said to be frozen.  
+
+For activations, if one of the inputs to the operation requires gradient, then the resulting activation also requires gradients. As a result, activations almost always requires gradients to be calculated.
 
 An input to an operation can be one of weight, input or activation e.g. result from another operation. 
 
-What happens when a weight is used in an operation? What will happen if the weight tensor needs to be saved for backward pass? Will occupy more memory space? The answer is no! Pytorch will create a new tensor but it will point to the same memory location of the original weight tensor, thus no additional memory will be used.
+What happens when a weight is used in an operation? What will happen if the weight tensor needs to be saved for backward pass? Will it occupy additional memory space? The answer is no! Pytorch will create a new tensor but it will point to the same memory location of the original weight tensor, thus no additional memory will be used.
 
 ### Torch CUDA Caching Allocator
 
@@ -119,9 +123,9 @@ Note that instead of two functions, `nn.Linear` introduces single function: Addm
 
 ## Automatic Mixed Precision Training (AMP)
 
-Another interesting aspect to see at computation graph would be see how Automatic Mixed Precision Training (AMP) looks. 
+Another interesting aspect to of the computation graphs would be to see how Automatic Mixed Precision Training (AMP) looks. 
 
-Neural network weights are stored as 4 byte floats. Float32 is called full precision. Modern GPUs performs matrix multiplication much faster at half precision, float16. However, float16 is not enough for some operations. Using solely float16 significantly degrades training performance. AMP is strikes a balance between full precision and half precision. In AMP, some operations use full precision while others use half precision.
+Neural network weights are stored as 4 byte floats. Float32 is called full precision. Modern GPUs performs matrix multiplication much faster at half precision, float16. However, half precision is not suitable for some operations. Using solely float16 significantly degrades training performance. AMP strikes a balance between full precision and half precision. In AMP, some operations use full precision while others use half precision.
 
 Here is how the computation graph in mixed mode looks like. Note `ToCopyBackward0` functions. They indicate that tensors are down scaled to half-precision.
 
@@ -218,7 +222,7 @@ If you uncomment `nn.LayerNorm` line and view the tensors, you will see that Lay
 
 Activation Checkpointing (AC) is a strategy that trade offs activation memory usage and training speed. In activation checkpointing, intermediate activations are not stored. Instead intermediate activations are calculated again. This approach saves some space but introduces extra calculations. 
 
-Let's revisit the linear layer example. This time input tensor is initialized to require gradients. Please note that intermediate typically activations requires gradients.
+Let's revisit the linear layer example. This time input tensor is initialized to require gradients. Please note that intermediate activations typically requires gradients.
 
 ![NN Linear Layer - Computation Graph - NO GC]({{site.baseurl}}/assets/images/torch-activation-memory-nn-linear-no-gc.png)
 
