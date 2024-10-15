@@ -28,6 +28,7 @@ In this post I will try to demystify the activation memory in neural networks. I
 Consider the following linear transformations which are very common in neural networks:
 
 $$z = Wx$$
+
 $$y = z + b$$
 
 The partial derivatives are:
@@ -99,7 +100,7 @@ During forward pass, pytorch creates a computation graph to allow execution of b
 
 This computation graph is core to the Pytorch's backpropagation implementation. Loss value is the root of the graph, network weights are leaves of the graph. Intermediate nodes correspond to backward pass functions that calculates output gradients. 
 
-![Linear Layer - Computation Graph]({{site.baseurl}}/assets/images/torch-actionation-memory-linear-graph.png)
+![Linear Layer - Computation Graph]({{site.baseurl}}/assets/images/torch-activation-memory-linear-graph.png)
 
 ## References
 
