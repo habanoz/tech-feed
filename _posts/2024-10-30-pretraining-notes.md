@@ -1,6 +1,7 @@
 ---
 layout: single
 title: "Transformer Pre-training Notes"
+classes: wide
 categories:
   - math
 
@@ -13,6 +14,10 @@ tags:
   - gopher
   - paper notes
   - pretraining
+
+toc: true
+toc_label: "My Table of Contents"
+toc_icon: "cog"
 ---
 
 
