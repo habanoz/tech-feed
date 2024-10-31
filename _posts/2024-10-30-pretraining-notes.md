@@ -16,10 +16,11 @@ tags:
   - pretraining
 
 toc: true
-toc_label: "My Table of Contents"
+toc_label: "Table of Contents"
 toc_icon: "cog"
 ---
 
+In this post, I have compiled architectural and training details of prominent language models. All information is based on the published papers.
 
 ## GPT3
 
