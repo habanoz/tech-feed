@@ -41,7 +41,7 @@ $$\frac{\partial y}{\partial z} = 1$$
 
 $$\frac{\partial y}{\partial b} = 1$$
 
-We need to find derivatives of `x` and `y` wrt. `W`, which gives how sensitive is y to the W and x. By chain rule:
+We need to find derivatives of `y` wrt. `x` and `W`, which gives how sensitive is y to the W and x. By chain rule:
 
 
 $$\frac{\partial y}{\partial x} = \frac{\partial y}{\partial z} \cdot \frac{\partial z}{\partial x} = \frac{\partial y}{\partial z} \cdot W$$
