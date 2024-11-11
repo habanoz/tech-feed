@@ -131,6 +131,21 @@ We make the assumption that the cosine cycle length should be approximately matc
 | Chinchilla 70B | 80     | 64     | 128      | 8,192  | 1x10-4 | 1.5M -> 3M |
 
 
+| Model | Attention (2017) | GPT (2018) | GPT-2 (2019) | GPT-3 (2020) | LaMDA (2021) | Gopher (2021) | Chinchilla (2022) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Optimizer | ADAM | ADAM | ADAM | ADAM | ADAM | ADAM | ADAM-W |
+| # Parameters | 213M | 117M | 1.5B | 175B | 137B | 280B | 70B |
+| Vocab size | ~37K | ~40K | ~50K | ~50K | ~32K | ~32K | ~32K |
+| Embedding dimension | 1024 | 768 | 1600 | 12288 | 8192 | 16384 | 8192 |
+| Key dimension | 64 | 64 | 64 | 128 | 128 | 128 | 128 |
+| # heads (H) | 16 | 12 | 25 | 96 | 128 | 128 | 64 |
+| # encoder layers | 6 | N/A | N/A | N/A | N/A | N/A | N/A |
+| # decoder layers | 6 | 12 | 48 | 96 | 64 | 80 | 80 |
+| Feed forward dimension | 4 * 1024 | 4 * 768 | 4 * 1600 | 4 * 12288 | 8 * 8192 | 4 * 16384 | 4 * 8192 |
+| Context Token Size | N/A | 512 | 1024 | 2048 | N/A | 2048 | 2048 |
+| Pre-Training tokens | ~160M | ~1.25B | ~10B | ~300B | ~168B | ~300B | ~1.4T |
+
+
 - Specifically, Gopher was trained with Adam (Kingma andBa, 2014) whereas Chinchilla was trained with AdamW.
 
 - Chinchilla stored a higher-precision copy of the weights in the sharded optimiser state.
