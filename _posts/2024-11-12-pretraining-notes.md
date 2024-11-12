@@ -36,19 +36,22 @@ Table shows number of tokens for `habanoz/news-tr-1.8M` dataset using each token
 
 I have trained many 10M and 40M parameter models to find optimum architecture for throughput. Starting from the original GPT2 architecture, I have decided to include following changes:
 
-- **Rotary Positional Embedding (ROPE)**[4]: ROPE harms throughput while improving validation loss. To mitigate throughput degradation, I have pre-computed and cached rotation matrices. With ROPE throughput is down by 10% while validation loss decreases by 2%. Despite significant impact on throughput, I have decided to continue with throughput.
+- **Rotary Positional Embedding (ROPE)**[4]: ROPE harms throughput while improving validation loss. To mitigate throughput degradation, I have pre-computed and cached rotation matrices. With ROPE, throughput is down by 10% while validation loss improves by 2%. Despite significant impact on throughput, I have decided to continue with ROPE.
 
-- **Group Query Attention (GQA)**: GQA improves throughput with no visible impact on validation loss. Throughput gain over ROPE baseline is about 2%. I used half the number of value heads.
+- **Group Query Attention (GQA)**: GQA improves throughput with no visible impact on validation loss. Throughput gain is about 2%. For two value heads, one key and one query head is used.
 
-- **Deep Layers**: Deep models are known to outperform wide models[5]. Deeper models are more capable at finding complex relationships between tokens while wider models have more capacity to learn facts. For smaller models depth is more preferable.  
+- **Deep Layers**: Deep models are known to outperform wide models[5]. Deeper models are better at finding complex relationships between tokens while wider models have more capacity to learn facts. For smaller models depth is more preferable.  
 
-- **Embedding Sharing**: Token embedding weights and output layer weights are shared. While embedding sharing has a small performance impact, it is a common practice for small models[5,9]. For large models, output layer size is negligible and output layer is not shared with token embeddings. 
+- **Embedding Sharing**: Token embedding weights and output layer weights are shared. While embedding sharing has a small performance impact, it is a common practice for small models[5,9]. For large models, output layer size is negligible hence output layer is not shared with token embedding layer.
 
-Notably, I did not use SwiGLU[7] activation, which was employed at [5], because during my tests I observed significant throughput degradation. 
 
-I also experimented with Squared Relu activation[8], and found it to hurt throughput. I decided not to use Squared Relu. My later experiments with `torch.compile` reveled actually it improves the throughput.
+During my testing, I explored various activation and normalization techniques to optimize throughput. 
 
-RMSNorm[6] was also found to hurt throughput which is surprising because RMSNorm is simpler alternative to the LayerNorm. My guess is the GPU I used is old and lacks optimized kernels for RMSNorm in contrast to LayerNorm. (Torch compile does not help with RMSNorm.)
+Notably, I avoided using SwiGLU[7] activation, as employed in [5], due to significant throughput degradation observed in my experiments.
+
+I also experimented with Squared ReLU[8] activation, but initially found it to negatively impact throughput. I decided not to use Squared ReLU. However, later experiments using torch.compile revealed that it actually improves throughput, contrary to my initial findings.
+
+Regarding normalization, I found RMSNorm[6] to hurt throughput, which was unexpected given its simplicity compared to LayerNorm. I suspect that this may be due to the GPU I used, which may lack optimized kernels for RMSNorm. Unfortunately, using torch.compile did not alleviate this issue with RMSNorm.
 
 Architecture Details:
 
@@ -75,14 +78,14 @@ The model is trained using 11B tokens (11 epochs). Each sample is prefixed with 
 
 - Learning Rate: 0.0018
 
-- Learning Rate Scheduler: Cosine schedular (2000 warmup steps, Decay to 10% of initial LR)
+- Learning Rate Scheduler: Cosine schedular (2000 warmup steps then decay to 10% of initial LR)
 
 - Batch size: 552960 (0.5M)
 
 - Number of Steps: 20K
 
 
-2 Tesla T4 GPUs are used in mixed precision mode. Training took 147 hours (roughly 6.5 days). 
+The training process utilized 2 Tesla T4 GPUs in mixed precision mode, which completed in approximately 147 hours, equivalent to roughly 6.5 days.
 
 ### Sequence length limitation
 
@@ -96,11 +99,11 @@ The model can output coherent completions in wide variety of topics included in 
 
 My conclusions:
 
-- News dataset is not a quality distribution to learn the language. There are unnecessary repetitions and long sentences. 
+- News are not an ideal source to learn the language. There are unnecessary repetitions and long sentences. 
 
 - Sequence length limitation maybe a major obstacle for model output quality.
 
-- Training for 10 epochs is too much. It is shown that multi-epoch training causes degradation[10]. A larger dataset is needed to avoid reusing tokens. 
+- Training for 11 epochs is too much. It is shown that multi-epoch training causes degradation[10]. A larger dataset is needed to avoid reusing tokens. 
 
 I share model weights [12], dataset[1], training code[13] and testing notebook[11] for practitioners.
 
