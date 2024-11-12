@@ -127,7 +127,7 @@ I share model weights [12], dataset[1], training code[13] and testing notebook[1
 
 9- [Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
 
-10-[o Repeat or Not To Repeat:Insights from Scaling LLM under Token-Crisis](https://arxiv.org/pdf/2305.13230)
+10-[To Repeat or Not To Repeat:Insights from Scaling LLM under Token-Crisis](https://arxiv.org/pdf/2305.13230)
 
 11-[Test Notebook](https://github.com/habanoz/nb_gpu_trainer/blob/main/evaluate_model_100m.ipynb)
 
