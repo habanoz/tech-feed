@@ -139,4 +139,4 @@ Finally I can start training HaberGPT-2 model using my training script[19].
 
 20- [Trafilatura](https://trafilatura.readthedocs.io/en/latest/)
 
-21- [news-tr-1.8M Dataset](habanoz/news-tr-1.8M)
+21- [news-tr-1.8M Dataset](https://huggingface.co/datasets/habanoz/news-tr-1.8M)
