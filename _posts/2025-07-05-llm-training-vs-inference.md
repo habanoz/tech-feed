@@ -25,9 +25,7 @@ Let $V$ be the vocabulary of all possible tokens. Let a sequence of tokens be $x
 
 $$P(x_{t+1}=x|x_1,x_2,…,x_t)$$
 
-for all $x∈V$.
-
-Using this PMF, it is possible to calculate $P(x_{t+1}|x_1,x_2,…,x_t)$ which gives probability of outputting token $x_{t+1}$ given the previous tokens $x_{1:t}$
+for all $x∈V$. Using this PMF, it is possible to calculate $P(x_{t+1}|x_1,x_2,…,x_t)$ which gives probability of outputting token $x_{t+1}$ given the previous tokens $x_{1:t}$
 
 An LLM consists of multiple layers of transformers which are bunch of matrices. The purpose of the training process is to find values of matrix elements such that the LLM can output PDFs that are close to actual PDFs. The purpose of the inference is to produce a PDF for a given input sequence.
 
@@ -48,9 +46,9 @@ Scaled dot-product attention:
 $Attention(Q, K, V) = softmax(\frac{Q K^T}{\sqrt{d_k}})V $
 
 Where:
-$Q = x W^Q$ -> (Dimensions: Batch Size (B) x Sequence Length (T) x Hidden Dimension (D))
-$K = x W^K$ -> (B x T x D)
-$V = x W^V$ -> (B x T x D)
+- $Q = x W^Q$ -> (Dimensions: Batch Size (B) x Sequence Length (T) x Hidden Dimension (D))
+- $K = x W^K$ -> (B x T x D)
+- $V = x W^V$ -> (B x T x D)
 
 In python:
 
