@@ -25,7 +25,7 @@ Let $V$ be the vocabulary of all possible tokens. Let a sequence of tokens be $x
 
 $$P(x_{t+1}=x|x_1,x_2,…,x_t)$$
 
-for all $x∈V$ .
+for all $x∈V$.
 
 Using this PMF, it is possible to calculate $P(x_{t+1}|x_1,x_2,…,x_t)$ which gives probability of outputting token $x_{t+1}$ given the previous tokens $x_{1:t}$
 
