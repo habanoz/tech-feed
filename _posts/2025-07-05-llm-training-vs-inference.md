@@ -15,7 +15,7 @@ mathjax: true
 
 This article investigates differences of LLM training vs serving in terms of memory access patterns. 
 
-Serving is to load the model and allow the users send generation requests. LLM generation involves multiple inference steps. In each step a token is generated. Then the generated token is prepended to input prompt to generate a new token in the following step. This process is referred as auto regressive decoding. 
+LLM serving means allowing the users to send generation requests. LLM generation involves multiple inference steps. After each step a token is generated. The generated token is appended to input prompt which is used as the input in the next step. This process is referred as auto regressive decoding. 
 
 For the sake of simplicity this article focus on single GPU case.
 
@@ -29,16 +29,17 @@ for all $x∈V$.
 
 Using this PMF, it is possible to calculate $P(x_{t+1} \mid x_1,x_2,…,x_t)$ which gives probability of outputting token $x_{t+1}$ given the previous tokens $x_{1:t}$
 
+An LLM consists of multiple layers of transformers which are bunch of matrices. The purpose of the training process is to find values of matrix elements such that the LLM can output PMFs that are close to actual language. 
 
-An LLM consists of multiple layers of transformers which are bunch of matrices. The purpose of the training process is to find values of matrix elements such that the LLM can output PDFs that are close to actual PDFs. The purpose of the inference is to produce a PDF for a given input sequence.
+The purpose of the inference is to produce a PMF for a given input sequence. The PMF can be used to sample the next token.
 
-> Please note that inference does not lead to a text completion. Inference only generates one token. To achieve a completion, it is necessary to run inference and sample from the pmf multiple times using a specific sampling strategy until a termination condition is met. This process is known as decoding. 
+> Please note that inference does not yield a text completion. Decoding process yields the text completion. Decoding process involves multiple inference runs.
 
 ## Objectives
 
-During training, massive amounts of text is consumed. Training throughput is defined as amount of tokens consumed during training. It is important to achieve maximum throughput achievable. This ensures high GPU utilization and low total training time. Low throughput on the other hand leads to longer training times and higher costs. 
+During training, massive amounts of text is consumed. Training throughput is defined as amount of tokens consumed during training. It is important to achieve maximum throughput possible. This ensures high GPU utilization and low total training time. Low throughput on the other hand leads to longer training times and higher costs. 
 
-During serving, throughput also matters. Serving throughput is defined as amount of tokens produced. It is important to have high GPU utilization for cheaper serving. Latency is defined as total time waited to obtain a completion text for the given prompt. 
+During serving, throughput also matters. Serving throughput is defined as amount of tokens produced. It is important to have high GPU utilization for cheaper serving. Latency is defined as total time waited to obtain a completion text for the input prompt. 
 
 During serving, requests can be interactive or batch-oriented. For interactive requests, latency is very important.
 
@@ -72,9 +73,9 @@ y = att @ v # (B, T, T) x (B, T, D) -> (B, T, D)
 
 ### Training
 
-During training the data is readily available. Once a batch is finished, the processing of the next batch immediately begins. All batches are in the same shape, meaning they have the same length, T. Attention is calculated for all input tokens which has $T^2$ complexity where each of the T tokens performs attention over all previous tokens. 
+During training the data is readily available. Once a batch is finished, the processing of the next batch immediately begins. All batches are in the same shape, meaning they have the same batch size (B) and sequence length (T). Attention is calculated for all input tokens which has $O(T^2)$ complexity. Each of the T tokens performs attention over all previous tokens. 
 
-During serving, input data may not be readily available. Request sizes can vary significantly. GPU requires processed batches to be of the same length. If different, they are left padded to the maximum length in the batch.   
+During serving, input data may not be readily available. Request sizes can vary significantly. GPU requires processed batches to be of the same length. If different, they are left padded to the maximum input size in the batch.  
 
 ### Inference
 
@@ -83,9 +84,9 @@ During serving, input data may not be readily available. Request sizes can vary 
 
 Generation has two distinct phases: prefill and decode. 
 
-During prefill phase, attention over the whole sequence is calculated where each token attends to all tokens in the sequence. Prefill phase is compute bound with $O(T^2)$ complexity, similar to how attention is calculated during training. Unlike training, K and V matrices are stored in so called KV cache to be used in decoding phase. 
+During prefill phase, attention over the whole sequence is calculated where each token attends to all previous tokens in the sequence. Prefill phase is compute bound with $O(T^2)$ complexity, similar to how attention is calculated during training. Unlike training, K and V matrices are stored in so called KV cache to be used in decoding phase. 
 
-Decode phase involves multiple decode steps. Note that Q and K values are only calculated for the last token generated. K and V values for the past tokens are retrieved from the KV cache. 
+Decode phase involves multiple decode steps. K and V values are only calculated for the last token. K and V values for the past tokens are retrieved from the KV cache. 
 
 ```python
 ## Forward function for decoding
@@ -108,7 +109,7 @@ y = att @ v # (B, 1, T) x (B, T, D) -> (B, 1, D)
 
 ```
 
-Also note that for decoding attention formulation can be expressed in the following terms:
+For decoding attention formulation can be expressed in the following terms:
 
 $Attention(Q_t, K_{1:t}, V_{1:t}) $
 
@@ -135,9 +136,9 @@ Training and Prefill operations are compute bound. They can utilize GPU well. Ho
 
 LLM Training is an optimization process. Involves two passes: forward pass and backward pass. 
 
-During the forward pass, activations are calculated and save for backward pass. At the end of the forward pass the loss is calculated.
+During the forward pass, activations are calculated and saved for backward pass. At the end of the forward pass the loss is calculated.
 
-During the backward pass, training uses the chain rule of calculus to compute the gradient of the loss with respect to model parameters. This requires:
+During the backward pass, training uses the chain rule of calculus to compute the gradient of the loss with respect to model parameters. This requires activations:
 
 $ \frac{\partial L}{\partial \theta} = \frac{\partial L}{\partial a} . \frac{\partial a}{\partial \theta} $
 
@@ -146,7 +147,7 @@ Where:
     - a is the activation (output of some layer)
     - θ is a parameter (e.g., a weight)
 
-Optimizer uses the gradients to update model weights. Most optimizers keep their internal states. For example AdamW optimizer keeps two state variables: mean and variance of the past gradients.
+Optimizer uses the gradients to update model weights. Optimizers have their own internal states for each weight. For example AdamW optimizer keeps two state variables: mean and variance of the past gradients.
 
 AdamW Update Rule:
 
