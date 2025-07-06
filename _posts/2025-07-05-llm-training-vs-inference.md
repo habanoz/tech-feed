@@ -21,9 +21,9 @@ For the sake of simplicity this article focus on single GPU case.
 
 ## Purpose
 
-Let {{ $V$ }} be the vocabulary of all possible tokens. Let a sequence of tokens be $x_{1:t}=(x_1,x_2,…,x_t)$, where $x_i∈V$. The LLM outputs a probability mass function (PMF) over all possible next tokens conditioned on the input sequence:
+Let $V$ be the vocabulary of all possible tokens. Let a sequence of tokens be $x_{1:t}=(x_1,x_2,…,x_t)$, where $x_i∈V$. The LLM outputs a probability mass function (PMF) over all possible next tokens conditioned on the input sequence:
 
-{{ $P(x_{t+1}=x|x_1,x_2,…,x_t)$ }}
+$$P(x_{t+1}=x|x_1,x_2,…,x_t)$$
 
 for all $x∈V$ .
 
