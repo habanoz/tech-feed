@@ -79,6 +79,7 @@ During serving, input data may not be readily available. Request sizes can vary 
 ### Inference
 
 ![Prefill vs Decoding]({{site.baseurl}}/assets/images/sarathi-serve.png)
+> Source [2]
 
 Generation has two distinct phases: prefill and decode. 
 
@@ -197,3 +198,9 @@ total_mem ≈ param_mem + kv_mem
 2- [Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve](https://arxiv.org/pdf/2403.02310)
 
 3- [Matrix multiplication with Tensor Cores](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/#Matrix_multiplication_with_Tensor_Cores)
+
+4- [Simple Attention Implementation](https://github.com/habanoz/lm_model_notebooks/blob/main/9_multi-headed-attention-lm.ipynb)
+
+5- [Simple Attention Implementation - Make More](https://github.com/karpathy/makemore/blob/master/makemore.py)
+
+6- [Attention Implementation - Llama3 Reference](https://github.com/meta-llama/llama3/blob/main/llama/model.py)
