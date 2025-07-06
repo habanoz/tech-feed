@@ -10,7 +10,7 @@ tags:
   - training
   - inference
   - memory
-
+mathjax: true
 ---
 
 This article investigates differences of LLM training vs serving in terms of memory access patterns. 
@@ -77,7 +77,7 @@ During serving, input data may not be readily available. Request sizes can vary 
 
 ### Inference
 
-![Prefill vs Decoding](images/sarathi-serve.png)
+![Prefill vs Decoding]({{site.baseurl}}/assets/images/sarathi-serve.png)
 
 Generation has two distinct phases: prefill and decode. 
 
